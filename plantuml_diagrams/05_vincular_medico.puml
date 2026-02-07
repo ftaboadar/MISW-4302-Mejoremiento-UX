@@ -1,0 +1,273 @@
+@startuml
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam activityBackgroundColor #E1F5FE
+skinparam activityBorderColor #0277BD
+skinparam activityFontSize 12
+skinparam arrowColor #0277BD
+
+title Flujo 5: Vincular con Médico - App Móvil (Paciente)
+
+start
+
+:Usuario en Home o Perfil;
+:Tap "Vincular con médico";
+
+:Pantalla Vinculación Médico;
+:Mostrar explicación:
+"Comparte tu adherencia con tu médico
+para mejor seguimiento de tu tratamiento";
+
+if (¿Usuario tiene código?) then (Sí)
+  partition "Flujo con Código" {
+    :Campo de texto código;
+    :Placeholder: "MED-XXXX-XXXX";
+    
+    :Usuario ingresa código;
+    
+    if (¿Formato válido?) then (No)
+      :Mostrar error:
+      "Formato de código inválido.
+      Debe ser MED-XXXX-XXXX";
+      stop
+    endif
+    
+    :Validar código con servidor;
+    
+    if (¿Código existe y válido?) then (No)
+      :Mostrar error;
+      
+      if (¿Código expiró?) then (Sí)
+        :Error: "Este código expiró.
+        Los códigos son válidos por 30 días.
+        Solicita uno nuevo a tu médico";
+        
+      elseif (¿Código ya usado?) then (Sí)
+        :Error: "Este código ya fue utilizado.
+        Cada código solo puede usarse una vez.
+        Solicita uno nuevo a tu médico";
+        
+      else (No existe)
+        :Error: "Código no encontrado.
+        Verifica que lo hayas ingresado
+        correctamente";
+      endif
+      
+      :Ofrecer opciones:
+      1. Intentar de nuevo
+      2. Enviar mensaje a médico;
+      stop
+    endif
+    
+    :Código validado ✓;
+    :Obtener datos del médico;
+    
+    :Pantalla Confirmación Médico;
+    :Mostrar tarjeta con:
+    - Foto profesional
+    - Nombre completo Dr./Dra.
+    - Especialidad
+    - Institución/Clínica
+    - Número registro médico;
+    
+    :Pregunta:
+    "¿Es este tu médico?";
+    
+    if (¿Usuario confirma?) then (No)
+      :Cancelar proceso;
+      :Sugerir verificar código
+      con el médico;
+      stop
+    endif
+    
+    :Usuario confirma vinculación;
+    :Enviar solicitud al médico;
+    
+    :Pantalla Solicitud Enviada;
+    :Mensaje:
+    "✓ Solicitud enviada a Dr./Dra. [Nombre]
+    Te notificaremos cuando acepte
+    tu solicitud";
+    
+    :Esperar respuesta del médico;
+    
+    if (¿Médico responde en 7 días?) then (No)
+      :Solicitud expira;
+      :Notificación al usuario:
+      "Tu solicitud expiró.
+      Intenta comunicarte directamente
+      con tu médico";
+      stop
+    endif
+    
+    if (¿Médico acepta?) then (Sí)
+      :Notificación push:
+      "🎉 Dr./Dra. [Nombre] aceptó
+      tu solicitud de vinculación";
+      
+      :Activar compartición de datos;
+      :Iniciar sincronización automática;
+      
+      :Pantalla Confirmación Final;
+      :Mostrar mensaje:
+      "✓ Vinculación exitosa
+      
+      Tu médico ahora puede ver:
+      - Tu adherencia medicamentos
+      - Tu historial de tomas
+      - Tus estadísticas generales
+      
+      Tu médico NO puede:
+      - Modificar tus medicamentos
+      - Ver tus datos personales completos
+      - Acceder sin tu consentimiento";
+      
+      :Badge "Médico vinculado" en perfil;
+      
+    else (Rechaza)
+      :Notificación:
+      "Dr./Dra. [Nombre] no pudo
+      aceptar tu solicitud";
+      
+      if (¿Médico dejó nota?) then (Sí)
+        :Mostrar razón del rechazo;
+      endif
+      
+      :Sugerir:
+      - Verificar datos con médico
+      - Intentar nuevamente
+      - Contactar clínica;
+      stop
+    endif
+  }
+  
+else (No tiene código)
+  partition "Flujo sin Código" {
+    :Pantalla "No tengo código";
+    
+    :Explicación:
+    "Tu médico debe generar un código
+    desde su dashboard MediMind
+    para que puedas vincularte";
+    
+    :Generar plantilla de mensaje;
+    :Mensaje pre-escrito:
+    "Hola Doctor/a,
+    
+    Estoy usando MediMind para gestionar
+    mis medicamentos y me gustaría vincular
+    mi cuenta con usted para que pueda
+    monitorear mi adherencia.
+    
+    ¿Podría generarme un código de
+    vinculación desde su dashboard MediMind?
+    
+    Gracias,
+    [Nombre Usuario]";
+    
+    :Opciones de envío;
+    
+    if (¿Medio de contacto?) then (WhatsApp)
+      :Abrir WhatsApp con mensaje;
+      :Usuario selecciona contacto médico;
+      :Enviar mensaje;
+      
+    elseif (Email) then
+      :Abrir cliente email;
+      :Pre-llenar asunto y cuerpo;
+      :Usuario envía email;
+      
+    elseif (SMS) then
+      :Abrir mensajes;
+      :Pre-llenar mensaje;
+      :Usuario envía SMS;
+      
+    else (Copiar)
+      :Copiar mensaje al portapapeles;
+      :Confirmación:
+      "✓ Mensaje copiado
+      Pégalo en tu app preferida";
+    endif
+    
+    :Regresar a pantalla vinculación;
+    :Instrucciones:
+    "Cuando tu médico te envíe el código,
+    vuelve aquí e ingrésalo";
+  }
+endif
+
+partition "Gestión Post-Vinculación" {
+  :Usuario en Perfil;
+  :Sección "Médico vinculado";
+  
+  :Tarjeta del médico;
+  :Opciones disponibles:
+  - Ver datos compartidos
+  - Pausar compartición
+  - Desvincular;
+  
+  if (¿Acción seleccionada?) then (Ver datos)
+    :Mostrar qué se comparte:
+    ✓ Adherencia general (%)
+    ✓ Historial últimos 30 días
+    ✓ Lista medicamentos activos
+    ✓ Alertas de no cumplimiento
+    
+    ✗ Datos personales completos
+    ✗ Fotos personales
+    ✗ Notas privadas;
+    
+  elseif (Pausar) then
+    :Confirmación:
+    "¿Pausar compartición?
+    Tu médico no verá actualizaciones
+    hasta que reactives";
+    
+    if (¿Confirma?) then (Sí)
+      :Pausar sincronización;
+      :Notificar al médico;
+      :Mostrar estado "Pausado";
+    endif
+    
+  else (Desvincular)
+    :Advertencia:
+    "⚠️ ¿Desvincular de Dr./Dra. [Nombre]?
+    
+    Esta acción:
+    - Detendrá compartición de datos
+    - Notificará a tu médico
+    - NO borrará tu historial
+    
+    ¿Continuar?";
+    
+    if (¿Confirma desvinculación?) then (Sí)
+      :Solicitar razón (opcional):
+      - Cambio de médico
+      - Ya no necesito seguimiento
+      - Problemas de privacidad
+      - Otro;
+      
+      :Desvincular;
+      :Notificar al médico;
+      :Detener sincronización;
+      
+      :Confirmación:
+      "✓ Desvinculación exitosa
+      Tu historial se mantiene privado";
+    endif
+  endif
+}
+
+:Control total del paciente;
+note right
+  El paciente SIEMPRE tiene
+  control total sobre:
+  - Con quién comparte
+  - Qué comparte
+  - Cuándo pausar
+  - Cuándo desvincular
+end note
+
+stop
+
+@enduml

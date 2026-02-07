@@ -1,0 +1,165 @@
+@startuml
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam activityBackgroundColor #E8F5E9
+skinparam activityBorderColor #388E3C
+skinparam activityFontSize 12
+skinparam arrowColor #388E3C
+
+title Flujo 2: Agregar Medicamento - App Móvil
+
+start
+
+:Usuario en Home;
+:Tap botón "+" o "Agregar medicamento";
+
+:Modal selección método;
+:Mostrar 3 opciones:
+1. Escanear código barras
+2. Foto de receta (OCR)
+3. Ingresar manualmente;
+
+if (¿Método elegido?) then (Escanear)
+  partition "Método: Escaneo Código Barras" {
+    :Abrir cámara;
+    :Enfocar código barras;
+    
+    if (¿Código detectado?) then (No)
+      :Mostrar error "No detectado";
+      :Ofrecer ingreso manual;
+      stop
+    endif
+    
+    :Código escaneado exitosamente;
+    :Buscar en base de datos;
+    
+    if (¿Medicamento encontrado?) then (Sí)
+      :Autocompletar campos:
+      - Nombre comercial
+      - Nombre genérico
+      - Concentración
+      - Presentación;
+    else (No)
+      :Permitir ingreso manual;
+    endif
+  }
+  
+elseif (Foto receta) then
+  partition "Método: OCR de Receta" {
+    :Abrir cámara;
+    :Capturar foto receta médica;
+    
+    if (¿Foto válida?) then (No)
+      :Solicitar nueva foto;
+      :Mostrar tips:
+      - Buena iluminación
+      - Sin sombras
+      - Letra legible;
+      stop
+    endif
+    
+    :Procesando OCR...;
+    :Detectar medicamentos en receta;
+    
+    if (¿Texto reconocido?) then (Sí)
+      :Mostrar lista de medicamentos detectados;
+      :Usuario selecciona de lista;
+    else (No)
+      :Ofrecer ingreso manual;
+    endif
+  }
+  
+else (Manual)
+  partition "Método: Ingreso Manual" {
+    :Campo texto medicamento;
+    :Usuario comienza a escribir;
+    
+    if (¿3+ caracteres?) then (Sí)
+      :Mostrar sugerencias autocompletar;
+      
+      if (¿Usuario selecciona sugerencia?) then (Sí)
+        :Autocompletar datos;
+      else (No)
+        :Continuar escribiendo manualmente;
+      endif
+    endif
+  }
+endif
+
+:Pantalla Configuración Horarios;
+:Usuario ingresa:
+- Dosis (mg/ml)
+- Cantidad por toma
+- Frecuencia;
+
+if (¿Frecuencia?) then (Cada 8 horas)
+  :Sugerir: 8:00, 16:00, 00:00;
+elseif (Cada 12 horas) then
+  :Sugerir: 9:00, 21:00;
+elseif (Cada 24 horas) then
+  :Sugerir: 9:00;
+else (Personalizado)
+  :Usuario define horarios específicos;
+endif
+
+:Seleccionar duración tratamiento;
+if (¿Duración?) then (Fecha fin específica)
+  :Seleccionar fecha en calendario;
+elseif (Indefinido) then
+  :Marcar como tratamiento continuo;
+else (Número de días)
+  :Ingresar cantidad de días;
+  :Calcular fecha fin automáticamente;
+endif
+
+:Pantalla Configuración Adicional (Opcional);
+:Usuario puede agregar:
+- Instrucciones especiales
+- Foto del medicamento
+- Notas personales
+- Recordatorio de compra;
+
+:Verificando interacciones medicamentosas...;
+
+if (¿Hay medicamentos registrados previamente?) then (Sí)
+  :Consultar API verificación interacciones;
+  
+  if (¿Se detectan interacciones?) then (Sí)
+    :Mostrar alerta:
+    - Nivel de severidad (Leve/Moderada/Grave)
+    - Descripción de interacción
+    - Recomendaciones;
+    
+    if (¿Interacción grave?) then (Sí)
+      :Alerta destacada;
+      :Sugerir consultar con médico;
+      
+      if (¿Usuario confirma agregar de todos modos?) then (No)
+        :Cancelar registro;
+        stop
+      endif
+    endif
+  endif
+endif
+
+:Pantalla Confirmación;
+:Mostrar resumen:
+- Nombre medicamento
+- Dosis y frecuencia
+- Horarios programados
+- Duración tratamiento
+- Stock inicial (calculado);
+
+if (¿Usuario confirma?) then (No)
+  :Volver a editar;
+  stop
+endif
+
+:Medicamento guardado exitosamente;
+:Programar notificaciones;
+:Actualizar calendario Home;
+:Mostrar confirmación visual;
+
+stop
+
+@enduml

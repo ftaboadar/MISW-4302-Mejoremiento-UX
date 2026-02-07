@@ -1,0 +1,109 @@
+@startuml
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam activityBackgroundColor #E3F2FD
+skinparam activityBorderColor #1976D2
+skinparam activityFontSize 12
+skinparam arrowColor #1976D2
+
+title Flujo 1: Registro e Ingreso (Onboarding) - App Móvil
+
+start
+
+:Usuario abre la app;
+
+if (¿Primera vez?) then (Sí)
+  :Pantalla Splash;
+  :Pantalla Bienvenida 1/3
+  (Presentación MediMind);
+  :Pantalla Bienvenida 2/3
+  (Beneficios);
+  :Pantalla Bienvenida 3/3
+  (Características);
+  
+  :Pantalla Registro;
+  :Usuario ingresa:
+  - Nombre
+  - Email
+  - Contraseña
+  - Confirmar contraseña;
+  
+  if (¿Datos válidos?) then (No)
+    :Mostrar error de validación;
+    stop
+  endif
+  
+  :Enviar email de verificación;
+  :Pantalla "Verifica tu email";
+  
+  if (¿Email verificado en 24h?) then (No)
+    :Mostrar opción "Reenviar email";
+    if (¿Usuario solicita reenvío?) then (Sí)
+      :Reenviar email verificación;
+    else (No)
+      :Cuenta expira;
+      stop
+    endif
+  endif
+  
+  :Email verificado exitosamente;
+  :Pantalla Configuración Inicial;
+  :Usuario ingresa:
+  - Fecha nacimiento
+  - Género
+  - Condiciones médicas;
+  
+  :Solicitar permisos notificaciones;
+  
+  if (¿Permisos concedidos?) then (No)
+    :Explicar importancia de notificaciones;
+    :Permitir continuar sin notificaciones;
+  endif
+  
+  :Pantalla Tutorial Interactivo;
+  :Mostrar 4 pasos clave:
+  1. Agregar medicamentos
+  2. Confirmar tomas
+  3. Ver historial
+  4. Vincular médico;
+  
+  if (¿Usuario completa o salta?) then (Salta)
+    :Marcar "Tutorial disponible en menú";
+  endif
+  
+  :Pantalla Home;
+  :Mostrar mensaje bienvenida;
+  
+else (No - Usuario existente)
+  :Pantalla Login;
+  :Usuario ingresa:
+  - Email
+  - Contraseña;
+  
+  if (¿Credenciales correctas?) then (No)
+    :Mostrar error;
+    if (¿Olvidó contraseña?) then (Sí)
+      :Enviar link recuperación;
+      :Usuario restablece contraseña;
+      :Login exitoso;
+    else (No)
+      :Intentar nuevamente;
+      if (¿3+ intentos fallidos?) then (Sí)
+        :Bloquear cuenta temporalmente;
+        :Enviar email seguridad;
+        stop
+      endif
+      stop
+    endif
+  endif
+  
+  :Login exitoso;
+  :Verificar si hay actualizaciones;
+  :Sincronizar datos;
+  :Pantalla Home;
+endif
+
+:Usuario en Home;
+stop
+
+@enduml

@@ -1,0 +1,327 @@
+@startuml
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam activityBackgroundColor #FFF9C4
+skinparam activityBorderColor #F9A825
+skinparam activityFontSize 12
+skinparam arrowColor #F9A825
+
+title Flujo 8: Aceptar Solicitud de Vinculación - Dashboard Web (Médico)
+
+start
+
+:Paciente usa código vinculación;
+:Sistema registra solicitud;
+
+partition "Notificación al Médico" {
+  :Enviar notificación en dashboard;
+  
+  :Badge numérico en campana:
+  "🔔 (1)";
+  
+  :Banner en dashboard:
+  "Nueva solicitud de vinculación
+  de [Nombre Paciente]";
+  
+  if (¿Email notificaciones activo?) then (Sí)
+    :Enviar email:
+    "Asunto: Nueva solicitud MediMind
+    
+    Dr./Dra. [Nombre],
+    
+    Tienes una nueva solicitud de
+    vinculación de [Nombre Paciente].
+    
+    Ingresa a tu dashboard para
+    revisar y aceptar.";
+  endif
+}
+
+:Médico abre dashboard;
+:Click en notificación;
+
+partition "Modal Solicitud" {
+  :Abrir modal centrado;
+  
+  :Título:
+  "Nueva Solicitud de Vinculación";
+  
+  :Tarjeta del solicitante;
+  :Mostrar información:
+  - Nombre completo
+  - Edad
+  - Género
+  - Fecha de solicitud
+  - Código usado;
+  
+  if (¿Paciente agregó condiciones?) then (Sí)
+    :Mostrar lista:
+    "Condiciones médicas declaradas:
+    - [Lista de condiciones]";
+  endif
+  
+  if (¿Paciente agregó nota?) then (Sí)
+    :Mostrar nota:
+    "Mensaje del paciente:
+    [Texto de la nota]";
+  endif
+  
+  :Pregunta principal:
+  "¿Reconoces a este paciente?";
+}
+
+partition "Decisión del Médico" {
+  if (¿Decisión?) then (Aceptar)
+    :Click botón "Aceptar Vinculación";
+    
+    :Modal confirmación:
+    "Al aceptar esta vinculación:
+    
+    ✓ Podrás monitorear adherencia
+    ✓ Recibirás alertas automáticas
+    ✓ Paciente será notificado
+    
+    El paciente podrá:
+    ✓ Pausar compartición cuando quiera
+    ✓ Desvincular en cualquier momento
+    
+    Tú NO podrás:
+    ✗ Modificar sus medicamentos
+    ✗ Acceder a datos sin consentimiento
+    
+    ¿Confirmar vinculación?";
+    
+    if (¿Confirma aceptación?) then (Sí)
+      :Procesar vinculación;
+      
+      :Acciones del sistema:
+      1. Crear registro vinculación
+      2. Activar sincronización automática
+      3. Generar ID único vinculación
+      4. Actualizar estado código (usado);
+      
+      :Notificar al paciente;
+      
+      :Push notification al paciente:
+      "🎉 ¡Excelente noticia!
+      
+      Dr./Dra. [Nombre] aceptó
+      tu solicitud de vinculación.
+      
+      Ya puedes compartir tu
+      adherencia con tu médico.";
+      
+      if (¿Paciente tiene email?) then (Sí)
+        :Email al paciente:
+        "Vinculación exitosa con
+        Dr./Dra. [Nombre]
+        
+        Desde ahora tu médico
+        puede monitorear tu adherencia.";
+      endif
+      
+      :Dashboard actualizado;
+      
+      :Modal éxito:
+      "✓ Vinculación exitosa
+      
+      [Nombre Paciente] ya aparece
+      en tu lista de pacientes.";
+      
+      :Agregar a lista pacientes;
+      :Incrementar contador:
+      "Total pacientes: [N+1]";
+      
+      :Ofrecer opciones:
+      - Ver perfil del paciente
+      - Cerrar y continuar;
+      
+      if (¿Ver perfil?) then (Sí)
+        :Navegar a página detalle;
+        :Mostrar datos iniciales:
+        - Información básica
+        - Medicamentos actuales
+        - Adherencia desde vinculación;
+      endif
+      
+    else (Cancela confirmación)
+      :Volver a modal solicitud;
+      stop
+    endif
+    
+  elseif (Rechazar) then
+    :Click botón "Rechazar";
+    
+    :Modal confirmación rechazo:
+    "¿Seguro que quieres rechazar
+    esta solicitud?
+    
+    El paciente será notificado.";
+    
+    :Checkbox opcional:
+    "☐ Agregar razón del rechazo
+    (el paciente la verá)";
+    
+    if (¿Agregar razón?) then (Sí)
+      :Campo de texto;
+      :Médico escribe razón:
+      "Ejemplo:
+      - No te tengo registrado/a
+      - Verifica que el código sea correcto
+      - Contacta a la clínica
+      - Etc.";
+    endif
+    
+    if (¿Confirma rechazo?) then (Sí)
+      :Procesar rechazo;
+      
+      :Acciones del sistema:
+      1. Marcar solicitud como rechazada
+      2. Registrar timestamp
+      3. Guardar razón (si existe);
+      
+      :Notificar al paciente;
+      
+      :Push notification al paciente:
+      "Dr./Dra. [Nombre] no pudo
+      aceptar tu solicitud de vinculación.";
+      
+      if (¿Médico dejó razón?) then (Sí)
+        :Mostrar razón en notificación:
+        "Razón: [Texto del médico]";
+      endif
+      
+      :Email al paciente:
+      "Solicitud de vinculación
+      no aceptada
+      
+      Te recomendamos:
+      - Verificar datos con tu médico
+      - Solicitar nuevo código
+      - Contactar a la clínica";
+      
+      :Eliminar solicitud de lista;
+      
+      :Modal confirmación:
+      "✓ Solicitud rechazada
+      
+      El paciente ha sido notificado.";
+      
+    else (Cancela rechazo)
+      :Volver a modal solicitud;
+      stop
+    endif
+    
+  else (Necesita más info)
+    :Click "Solicitar información";
+    
+    :Modal mensaje al paciente:
+    "Necesito más información
+    para verificar tu identidad";
+    
+    :Campo de texto;
+    :Médico escribe qué necesita:
+    "Ejemplo:
+    - ¿Cuándo fue tu última consulta?
+    - ¿Recuerdas el diagnóstico?
+    - ¿Podrías compartir tu # historia clínica?";
+    
+    if (¿Enviar solicitud?) then (Sí)
+      :Enviar mensaje al paciente;
+      
+      :Notificación al paciente:
+      "Dr./Dra. [Nombre] necesita
+      más información antes de
+      aceptar tu solicitud.
+      
+      Mensaje:
+      [Texto del médico]
+      
+      Por favor responde desde
+      tu app.";
+      
+      :Marcar solicitud como:
+      "Pendiente de información";
+      
+      :Agregar a lista "Solicitudes pendientes";
+      
+      :Establecer límite tiempo;
+      if (¿Paciente responde en 7 días?) then (No)
+        :Solicitud expira;
+        :Notificar al paciente:
+        "Tu solicitud expiró por
+        falta de respuesta.
+        Genera una nueva.";
+        
+        :Eliminar solicitud;
+        stop
+      else (Sí responde)
+        :Notificar al médico:
+        "Paciente respondió tu
+        solicitud de información";
+        
+        :Actualizar modal con respuesta;
+        :Médico puede entonces:
+        Aceptar o Rechazar;
+      endif
+    endif
+  endif
+}
+
+partition "Gestión de Solicitudes Múltiples" {
+  :Lista de solicitudes pendientes;
+  
+  :Tabla ordenada por fecha;
+  :Columnas:
+  | Paciente | Fecha | Estado | Acciones |;
+  
+  :Filtros disponibles:
+  - Nuevas (sin revisar)
+  - Pendientes de info
+  - Por revisar
+  - Todas;
+  
+  :Contador en sidebar:
+  "Solicitudes pendientes (N)";
+  
+  :Procesamiento batch;
+  if (¿Múltiples solicitudes?) then (Sí)
+    :Opción "Revisar siguiente";
+    :Teclado shortcut:
+    - Enter = Aceptar
+    - R = Rechazar
+    - I = Solicitar info
+    - → = Siguiente;
+    
+    :Facilitar revisión rápida;
+  endif
+}
+
+partition "Control y Auditoría" {
+  :Historial de solicitudes;
+  
+  :Pestaña "Historial";
+  :Ver todas las solicitudes:
+  - Aceptadas (fecha, paciente)
+  - Rechazadas (fecha, razón)
+  - Expiradas (fecha);
+  
+  :Búsqueda por:
+  - Nombre paciente
+  - Rango de fechas
+  - Estado;
+  
+  :Exportar historial como PDF/Excel;
+  
+  note right
+    Para auditoría institucional
+    y cumplimiento regulatorio
+  end note
+}
+
+:Proceso completado;
+:Dashboard actualizado;
+
+stop
+
+@enduml

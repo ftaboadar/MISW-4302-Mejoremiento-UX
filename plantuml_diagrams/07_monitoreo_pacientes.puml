@@ -1,0 +1,274 @@
+@startuml
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam activityBackgroundColor #E8EAF6
+skinparam activityBorderColor #3F51B5
+skinparam activityFontSize 12
+skinparam arrowColor #3F51B5
+
+title Flujo 7: Monitoreo de Pacientes - Dashboard Web (Médico)
+
+start
+
+:Médico hace login en dashboard;
+
+:Dashboard Principal;
+
+partition "Vista General" {
+  :Mostrar KPIs principales;
+  
+  :CARD 1 - Total Pacientes;
+  :Número grande
+  + Tendencia vs mes anterior;
+  
+  :CARD 2 - Alertas Pendientes;
+  :Número con badge rojo
+  + Acción rápida "Ver alertas";
+  
+  :CARD 3 - Adherencia Promedio;
+  :% en grande
+  + Gráfico sparkline
+  + Código color;
+  
+  :CARD 4 - Pacientes en Riesgo;
+  :Cantidad con adherencia <70%
+  + Link rápido "Ver lista";
+}
+
+partition "Tabla de Pacientes" {
+  :Lista de pacientes vinculados;
+  
+  :Columnas de tabla:
+  | Nombre | Edad | Adherencia 7d | Estado | # Meds | Última conexión |;
+  
+  :Cada fila muestra:
+  - Nombre paciente (anónimo si configurado)
+  - Edad
+  - % adherencia últimos 7 días
+  - Indicador visual:
+    🟢 ≥85% (Excelente)
+    🟡 70-84% (Aceptable)
+    🔴 <70% (En riesgo)
+  - Cantidad medicamentos activos
+  - Última vez que abrió la app;
+  
+  :Ordenamiento por columna;
+  :Click en encabezado para ordenar;
+  
+  :Barra de búsqueda;
+  :Buscar por nombre paciente;
+}
+
+partition "Filtros Avanzados" {
+  :Panel de filtros (expandible);
+  
+  if (¿Filtro aplicado?) then (Solo en riesgo)
+    :Mostrar solo pacientes
+    con adherencia <70%;
+    :Actualizar contador;
+    
+  elseif (Por rango adherencia) then
+    :Opciones:
+    - 90-100% (Excelente)
+    - 70-89% (Buena)
+    - 50-69% (Regular)
+    - <50% (Crítica);
+    
+  elseif (Por condición médica) then
+    :Lista condiciones:
+    - Hipertensión
+    - Diabetes
+    - Cardiopatías
+    - Otras;
+    
+  elseif (Por período) then
+    :Opciones:
+    - Últimos 7 días
+    - Últimos 30 días
+    - Últimos 90 días
+    - Personalizado;
+  endif
+  
+  :Aplicar filtros;
+  :Actualizar tabla;
+  :Mostrar contador:
+  "Mostrando X de Y pacientes";
+}
+
+partition "Ver Detalle de Paciente" {
+  :Médico click en fila paciente;
+  
+  :Página Detalle Paciente;
+  
+  :Sección 1 - Perfil;
+  :Mostrar:
+  - Nombre
+  - Edad, género
+  - Fecha vinculación
+  - Condiciones médicas registradas;
+  
+  :Sección 2 - Adherencia;
+  :% adherencia grande;
+  :Gráfico últimos 30 días;
+  :Tendencia (mejorando/estable/empeorando);
+  
+  :Sección 3 - Medicamentos Activos;
+  :Tabla de medicamentos;
+  
+  :Por cada medicamento:
+  - Nombre
+  - Dosis y frecuencia
+  - Adherencia específica (%)
+  - Última toma registrada
+  - Próxima toma programada;
+  
+  if (¿Click en medicamento?) then (Sí)
+    :Expandir detalles:
+    - Historial completo
+    - Patrón de tomas
+    - Horarios programados vs reales
+    - Notas del paciente;
+  endif
+  
+  :Sección 4 - Historial Reciente;
+  :Timeline últimos 14 días;
+  :Mostrar eventos:
+  ✓ Tomas confirmadas
+  ✗ Tomas perdidas
+  ⏰ Tomas retrasadas
+  ➕ Medicamentos agregados
+  ✏️ Modificaciones;
+  
+  :Sección 5 - Alertas;
+  if (¿Hay alertas activas?) then (Sí)
+    :Lista de alertas:
+    
+    ALERTA TIPO 1: Adherencia baja
+    "⚠️ Adherencia <70% por 3+ días";
+    
+    ALERTA TIPO 2: Inactividad
+    "📵 Sin conexión por 7+ días";
+    
+    ALERTA TIPO 3: Patrón irregular
+    "🔔 Medicamento X olvidado >3 veces";
+    
+    ALERTA TIPO 4: Desvinculación
+    "⛔ Paciente pausó compartición";
+    
+    :Cada alerta tiene:
+    - Timestamp
+    - Descripción
+    - Nivel severidad
+    - Acción sugerida;
+  endif
+}
+
+partition "Acciones sobre Paciente" {
+  :Panel de acciones;
+  
+  if (¿Acción seleccionada?) then (Ver historial completo)
+    :Abrir modal historial;
+    :Calendario interactivo;
+    :Exportar como PDF;
+    
+  elseif (Contactar paciente) then
+    :Modal opciones contacto:
+    - Ver email registrado
+    - Generar mensaje plantilla
+    - Marcar para seguimiento;
+    
+    note right
+      No hay comunicación
+      directa desde la app
+      por privacidad
+    end note
+    
+  elseif (Agregar nota clínica) then
+    :Campo de texto;
+    :Médico escribe nota privada;
+    :Solo visible para el médico;
+    
+    :Guardar con timestamp;
+    :Agregar a historial notas;
+    
+  elseif (Generar reporte) then
+    :Modal configuración reporte;
+    
+    :Seleccionar:
+    - Período (7/30/90 días)
+    - Incluir gráficos (Sí/No)
+    - Incluir notas clínicas (Sí/No)
+    - Formato (PDF/Excel);
+    
+    :Generar documento;
+    :Descargar automáticamente;
+    
+  else (Desvincular paciente)
+    :Advertencia:
+    "⚠️ ¿Desvincular paciente?
+    
+    Esta acción:
+    - Detendrá monitoreo
+    - Notificará al paciente
+    - Mantendrá historial archivado
+    
+    ¿Continuar?";
+    
+    if (¿Confirma?) then (Sí)
+      :Solicitar razón (opcional);
+      :Desvincular;
+      :Notificar paciente;
+      :Mover a sección "Archivados";
+    endif
+  endif
+}
+
+partition "Sistema de Alertas" {
+  :Badge en campana notificaciones;
+  
+  :Click campana;
+  :Panel alertas desplegable;
+  
+  :Lista cronológica alertas;
+  
+  :Cada alerta muestra:
+  - Paciente afectado
+  - Tipo de alerta
+  - Timestamp
+  - Estado (Nueva/Vista/Resuelta);
+  
+  if (¿Click en alerta?) then (Sí)
+    :Marcar como vista;
+    :Navegar a detalle paciente;
+    :Resaltar sección relevante;
+  endif
+  
+  :Opción "Marcar todas como vistas";
+  :Opción "Configurar alertas";
+  
+  if (¿Configurar alertas?) then (Sí)
+    :Modal preferencias;
+    
+    :Toggles por tipo:
+    ☑ Adherencia <70% por 3+ días
+    ☑ Sin conexión 7+ días
+    ☑ Medicamento olvidado >3 veces
+    ☑ Nueva solicitud vinculación
+    ☑ Paciente se desvinculó;
+    
+    :Opción frecuencia resumen:
+    - Tiempo real
+    - Diario (8:00 AM)
+    - Semanal (Lunes 8:00 AM);
+    
+    :Guardar preferencias;
+  endif
+}
+
+:Dashboard actualizado;
+:Médico puede continuar
+monitoreando pacientes;
+
+stop
+
+@enduml

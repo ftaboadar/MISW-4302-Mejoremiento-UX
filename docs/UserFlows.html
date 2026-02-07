@@ -1,0 +1,1430 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediMind - User Flows Completos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 40px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 1.3em;
+            opacity: 0.9;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 40px;
+            background: #f8f9fa;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 3em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.95em;
+            margin-top: 8px;
+        }
+
+        .instructions {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 30px;
+            margin: 40px;
+            border-radius: 10px;
+        }
+
+        .instructions h2 {
+            color: #856404;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .instructions ol {
+            margin-left: 20px;
+        }
+
+        .instructions li {
+            margin: 15px 0;
+            color: #856404;
+            font-size: 1.1em;
+        }
+
+        .instructions code {
+            background: #f8f9fa;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #d63384;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .flow-section {
+            margin-bottom: 60px;
+            border-bottom: 3px solid #f0f0f0;
+            padding-bottom: 40px;
+        }
+
+        .flow-section:last-child {
+            border-bottom: none;
+        }
+
+        .flow-header {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border-left: 6px solid;
+        }
+
+        .flow-header.mobile {
+            border-left-color: #2196F3;
+        }
+
+        .flow-header.web {
+            border-left-color: #f44336;
+        }
+
+        .flow-header.error {
+            border-left-color: #ff9800;
+        }
+
+        .flow-header h2 {
+            font-size: 2em;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .flow-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .flow-header.mobile .flow-icon {
+            background: #2196F3;
+        }
+
+        .flow-header.web .flow-icon {
+            background: #f44336;
+        }
+
+        .flow-header.error .flow-icon {
+            background: #ff9800;
+        }
+
+        .flow-meta {
+            display: flex;
+            gap: 30px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        .meta-item strong {
+            color: #333;
+        }
+
+        .flow-description {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .flow-description h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .flow-description p {
+            color: #555;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .flow-description ul, .flow-description ol {
+            margin-left: 25px;
+            color: #555;
+        }
+
+        .flow-description li {
+            margin: 8px 0;
+        }
+
+        .diagram-placeholder {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 3px dashed #ccc;
+            border-radius: 15px;
+            padding: 60px;
+            text-align: center;
+            margin: 30px 0;
+            position: relative;
+        }
+
+        .diagram-placeholder::before {
+            content: "📊";
+            font-size: 4em;
+            display: block;
+            margin-bottom: 20px;
+        }
+
+        .diagram-placeholder h4 {
+            color: #667eea;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+
+        .diagram-placeholder p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .diagram-placeholder code {
+            background: white;
+            color: #d63384;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .key-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .feature-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .feature-card h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .feature-card ul {
+            list-style: none;
+            margin: 0;
+        }
+
+        .feature-card li {
+            padding: 5px 0;
+            color: #555;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .feature-card li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #4caf50;
+            font-weight: bold;
+        }
+
+        .download-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 50px 40px;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .download-section h2 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .download-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .btn {
+            background: white;
+            color: #667eea;
+            padding: 15px 35px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-secondary:hover {
+            background: white;
+            color: #667eea;
+        }
+
+        footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 30px;
+        }
+
+        footer p {
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2em;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .flow-meta {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+        }
+
+        .highlight-box {
+            background: #e3f2fd;
+            border-left: 5px solid #2196F3;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .highlight-box.warning {
+            background: #fff3e0;
+            border-left-color: #ff9800;
+        }
+
+        .highlight-box.success {
+            background: #e8f5e9;
+            border-left-color: #4caf50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏥 MediMind - User Flows</h1>
+            <p>Sistema Completo de Flujos de Usuario para Gestión de Medicamentos</p>
+        </header>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number">9</div>
+                <div class="stat-label">Flujos Completos</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">5</div>
+                <div class="stat-label">Flujos App Móvil</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">3</div>
+                <div class="stat-label">Flujos Dashboard Web</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">40+</div>
+                <div class="stat-label">Pantallas Mapeadas</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">50+</div>
+                <div class="stat-label">Decisiones de Usuario</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">15+</div>
+                <div class="stat-label">Casos de Error</div>
+            </div>
+        </div>
+
+        <div class="instructions">
+            <h2>📋 Cómo Generar los Diagramas</h2>
+            <p><strong>Sigue estos pasos para convertir los archivos .puml en imágenes:</strong></p>
+            <ol>
+                <li>Visita: <code>http://www.plantuml.com/plantuml/uml/</code></li>
+                <li>Abre cualquier archivo <code>.puml</code> con un editor de texto</li>
+                <li>Copia TODO el contenido del archivo</li>
+                <li>Pega el contenido en el editor web de PlantUML</li>
+                <li>Click en <strong>"Submit"</strong></li>
+                <li>El diagrama se generará automáticamente</li>
+                <li>Click derecho → "Guardar imagen como..." para descargar</li>
+                <li>Repite para los 9 archivos .puml</li>
+            </ol>
+            <p style="margin-top: 20px;"><strong>💡 Tip:</strong> Exporta como PNG para mejor calidad en presentaciones, o como SVG para documentos web.</p>
+        </div>
+
+        <div class="content">
+            <!-- FLUJO 1 -->
+            <div class="flow-section">
+                <div class="flow-header mobile">
+                    <h2>
+                        <div class="flow-icon">📱</div>
+                        <span>Flujo 1: Registro e Ingreso (Onboarding)</span>
+                    </h2>
+                    <div class="flow-meta">
+                        <div class="meta-item">
+                            <strong>Plataforma:</strong> App Móvil (Paciente)
+                        </div>
+                        <div class="meta-item">
+                            <strong>Pantallas:</strong> 11
+                        </div>
+                        <div class="meta-item">
+                            <strong>Tiempo estimado:</strong> 3-5 minutos
+                        </div>
+                        <div class="meta-item">
+                            <strong>Archivo:</strong> <code>01_registro_onboarding.puml</code>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flow-description">
+                    <h3>Objetivo del Flujo</h3>
+                    <p>Permitir que nuevos usuarios creen su cuenta y completen el proceso de onboarding, o que usuarios existentes accedan a la aplicación de manera segura.</p>
+
+                    <h3>Descripción Detallada</h3>
+                    <p>Este flujo maneja dos caminos principales:</p>
+                    
+                    <div class="key-features">
+                        <div class="feature-card">
+                            <h4>Primera vez (Registro)</h4>
+                            <ul>
+                                <li>Splash screen inicial</li>
+                                <li>3 pantallas de bienvenida</li>
+                                <li>Formulario de registro</li>
+                                <li>Verificación de email</li>
+                                <li>Configuración inicial de perfil</li>
+                                <li>Solicitud de permisos</li>
+                                <li>Tutorial interactivo</li>
+                            </ul>
+                        </div>
+                        <div class="feature-card">
+                            <h4>Usuario existente (Login)</h4>
+                            <ul>
+                                <li>Pantalla de login directo</li>
+                                <li>Recuperación de contraseña</li>
+                                <li>Bloqueo tras 3 intentos fallidos</li>
+                                <li>Verificación de actualizaciones</li>
+                                <li>Sincronización automática</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>Puntos de Dolor Identificados:</strong>
+                        <ul>
+                            <li>Onboarding muy largo puede causar abandono</li>
+                            <li>Email de verificación no llega o va a spam</li>
+                            <li>Usuarios rechazan permisos sin entender el valor</li>
+                        </ul>
+                    </div>
+
+                    <div class="highlight-box success">
+                        <strong>Soluciones Implementadas:</strong>
+                        <ul>
+                            <li>Onboarding limitado a 3 pantallas máximo</li>
+                            <li>Opción "Saltar tutorial" para usuarios experimentados</li>
+                            <li>Reenvío de email con un solo click</li>
+                            <li>Explicar valor de permisos antes de solicitarlos</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="diagram-placeholder">
+                    <h4>Diagrama de Flujo 1</h4>
+                    <p>Genera este diagrama usando el archivo:</p>
+                    <code>01_registro_onboarding.puml</code>
+                </div>
+            </div>
+
+            <!-- FLUJO 2 -->
+            <div class="flow-section">
+                <div class="flow-header mobile">
+                    <h2>
+                        <div class="flow-icon">💊</div>
+                        <span>Flujo 2: Agregar Medicamento</span>
+                    </h2>
+                    <div class="flow-meta">
+                        <div class="meta-item">
+                            <strong>Plataforma:</strong> App Móvil (Paciente)
+                        </div>
+                        <div class="meta-item">
+                            <strong>Pantallas:</strong> 7
+                        </div>
+                        <div class="meta-item">
+                            <strong>Tiempo estimado:</strong> 2-7 minutos
+                        </div>
+                        <div class="meta-item">
+                            <strong>Archivo:</strong> <code>02_agregar_medicamento.puml</code>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flow-description">
+                    <h3>Objetivo del Flujo</h3>
+                    <p>Permitir a los usuarios agregar medicamentos a su lista de manera rápida y precisa, utilizando múltiples métodos de entrada según su preferencia y situación.</p>
+
+                    <h3>Descripción Detallada</h3>
+                    <p>Este flujo ofrece 3 métodos de entrada para maximizar la comodidad:</p>
+                    
+                    <div class="key-features">
+                        <div class="feature-card">
+                            <h4>Método 1: Escaneo de Código de Barras</h4>
+                            <ul>
+                                <li>Apertura de cámara automática</li>
+                                <li>Detección automática del código</li>
+                                <li>Autocompletado de datos del medicamento</li>
+                                <li>Búsqueda en base de datos farmacéutica</li>
+                                <li>Tiempo: 30 segundos - 2 minutos</li>
+                            </ul>
+                        </div>
+                        <div class="feature-card">
+                            <h4>Método 2: Foto de Receta (OCR)</h4>
+                            <ul>
+                                <li>Captura de foto de receta médica</li>
+                                <li>Procesamiento OCR inteligente</li>
+                                <li>Detección múltiple de medicamentos</li>
+                                <li>Selección de lista detectada</li>
+                                <li>Tiempo: 1-3 minutos</li>
+                            </ul>
+                        </div>
+                        <div class="feature-card">
+                            <h4>Método 3: Ingreso Manual</h4>
+                            <ul>
+                                <li>Autocompletado mientras escribe</li>
+                                <li>Sugerencias inteligentes</li>
+                                <li>Base de datos completa</li>
+                                <li>Mayor control del usuario</li>
+                                <li>Tiempo: 3-7 minutos</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h3>Configuración de Horarios</h3>
+                    <p>Después de seleccionar el medicamento, el usuario configura:</p>
+                    <ul>
+                        <li><strong>Dosis:</strong> Cantidad en mg/ml</li>
+                        <li><strong>Frecuencia:</strong> Cada 8h, 12h, 24h, o personalizado</li>
+                        <li><strong>Duración:</strong> Fecha específica, indefinido, o número de días</li>
+                        <li><strong>Instrucciones especiales:</strong> Notas personalizadas</li>
+                    </ul>
+
+                    <div class="highlight-box warning">
+                        <strong>⚠️ Verificación de Interacciones Medicamentosas</strong>
+                        <p>Si el usuario ya tiene medicamentos registrados, el sistema consulta una API para verificar posibles interacciones. Se muestran alertas según severidad:</p>
+                        <ul>
+                            <li><strong>Leve:</strong> Información, puede continuar</li>
+                            <li><strong>Moderada:</strong> Advertencia, recomendar consultar médico</li>
+                            <li><strong>Grave:</strong> Alerta destacada, requiere confirmación explícita</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="diagram-placeholder">
+                    <h4>Diagrama de Flujo 2</h4>
+                    <p>Genera este diagrama usando el archivo:</p>
+                    <code>02_agregar_medicamento.puml</code>
+                </div>
+            </div>
+
+            <!-- FLUJO 3 -->
+            <div class="flow-section">
+                <div class="flow-header mobile">
+                    <h2>
+                        <div class="flow-icon">🔔</div>
+                        <span>Flujo 3: Recordatorio y Confirmación de Toma</span>
+                    </h2>
+                    <div class="flow-meta">
+                        <div class="meta-item">
+                            <strong>Plataforma:</strong> App Móvil (Paciente)
+                        </div>
+                        <div class="meta-item">
+                            <strong>Interacciones:</strong> Múltiples
+                        </div>
+                        <div class="meta-item">
+                            <strong>Tiempo estimado:</strong> 10-30 segundos
+                        </div>
+                        <div class="meta-item">
+                            <strong>Archivo:</strong> <code>03_recordatorio_confirmacion.puml</code>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flow-description">
+                    <h3>Objetivo del Flujo</h3>
+                    <p>Notificar al usuario en el momento exacto de tomar su medicamento y registrar con precisión si lo tomó, cuándo lo tomó, o por qué no lo tomó.</p>
+
+                    <h3>Descripción Detallada</h3>
+                    <p>Este es el flujo más crítico del sistema, ya que afecta directamente la adherencia del paciente. La notificación push ofrece 3 opciones inmediatas:</p>
+
+                    <div class="key-features">
+                        <div class="feature-card">
+                            <h4>Opción 1: "Tomado" ✓</h4>
+                            <ul>
+                                <li>Registra timestamp exacto</li>
+                                <li>Calcula adherencia según retraso</li>
+                                <li>Actualiza stock restante</li>
+                                <li>Sincroniza con dashboard médico</li>
+                                <li>Alerta si stock bajo (<3 dosis)</li>
+                            </ul>
+                        </div>
+                        <div class="feature-card">
+                            <h4>Opción 2: "Posponer" ⏰</h4>
+                            <ul>
+                                <li>Seleccionar: 5, 15, 30, o 60 min</li>
+                                <li>Máximo 3 pospuestos</li>
+                                <li>Afecta adherencia (-5% por pospuesto)</li>
+                                <li>Al 3er pospuesto: advertencia final</li>
+                                <li>>3 pospuestos: marca NO tomado</li>
+                            </ul>
+                        </div>
+                        <div class="feature-card">
+                            <h4>Opción 3: "Ver detalles" 📄</h4>
+                            <ul>
+                                <li>Abre app en info del medicamento</li>
+                                <li>Muestra instrucciones completas</li>
+                                <li>Permite confirmar o posponer después</li>
+                                <li>Útil para recordar indicaciones</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h3>Sistema de Escala de Recordatorios</h3>
+                    <p>Si el usuario ignora la notificación, el sistema implementa un protocolo de escala:</p>
+                    <ol>
+                        <li><strong>T+0:</strong> Notificación inicial con 3 opciones</li>
+                        <li><strong>T+10 min:</strong> Recordatorio insistente (sonido más fuerte, vibración más larga)</li>
+                        <li><strong>T+20 min:</strong> ÚLTIMA notificación con advertencia</li>
+                        <li><strong>T+1 hora:</strong> Marca automáticamente como NO tomado, adherencia = 0%, alerta al médico</li>
+                    </ol>
+
+                    <div class="highlight-box warning">
+                        <strong>Patrón Frecuente de No Adherencia</strong>
+                        <p>Si el sistema detecta que el usuario no toma medicamentos >3 veces por semana y tiene un contacto de emergencia configurado, envía una alerta automática para intervención temprana.</p>
+                    </div>
+
+                    <h3>Lógica de Cálculo de Adherencia</h3>
+                    <ul>
+                        <li><strong>100%:</strong> Tomado a tiempo (±5 minutos)</li>
+                        <li><strong>90%:</strong> Retraso menor a 30 minutos</li>
+                        <li><strong>70%:</strong> Retraso de 30-60 minutos</li>
+                        <li><strong>50%:</strong> Saltado intencionalmente con justificación</li>
+                        <li><strong>0%:</strong> No tomado después de 1 hora o >3 pospuestos</li>
+                    </ul>
+
+                    <div class="highlight-box success">
+                        <strong>Decisión de Diseño: Confirmación Activa</strong>
+                        <p>Requerimos que el usuario confirme activamente la toma en lugar de auto-cerrar la notificación. Esto evita falsos positivos y proporciona datos confiables al médico. Estudios muestran que 95% de los pospuestos que superan 3 veces terminan en no adherencia.</p>
+                    </div>
+                </div>
+
+                <div class="diagram-placeholder">
+                    <h4>Diagrama de Flujo 3</h4>
+                    <p>Genera este diagrama usando el archivo:</p>
+                    <code>03_recordatorio_confirmacion.puml</code>
+                </div>
+            </div>
+
+            <!-- FLUJO 4 -->
+            <div class="flow-section">
+                <div class="flow-header mobile">
+                    <h2>
+                        <div class="flow-icon">📊</div>
+                        <span>Flujo 4: Consultar Historial</span>
+                    </h2>
+                    <div class="flow-meta">
+                        <div class="meta-item">
+                            <strong>Plataforma:</strong> App Móvil (Paciente)
+                        </div>
+                        <div class="meta-item">
+                            <strong>Pantallas:</strong> 5
+                        </div>
+                        <div class="meta-item">
+                            <strong>Archivo:</strong> <code>04_consultar_historial.puml</code>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flow-description">
+                    <h3>Objetivo del Flujo</h3>
+                    <p>Permitir al usuario revisar su adherencia histórica, identificar patrones, y exportar reportes para compartir con su médico.</p>
+
+                    <h3>Visualización de Datos</h3>
+                    <div class="key-features">
+                        <div class="feature-card">
+                            <h4>Vista Principal</h4>
+                            <ul>
+                                <li>Calendario mensual con color-coding</li>
+                                <li>% adherencia en número grande</li>
+                                <li>Gráfico de tendencia 30 días</li>
+                                <li>Indicadores visuales por estado</li>
+                            </ul>
+                        </div>
+                        <div class="feature-card">
+                            <h4>Código de Colores</h4>
+                            <ul>
+                                <li>🟢 Verde: Días completos</li>
+                                <li>🟡 Amarillo: Días con retrasos</li>
+                                <li>🔴 Rojo: Días con faltas</li>
+                                <li>⚪ Gris: Días saltados intencionalmente</li>
+                            </ul>
+                        </div>
+                        <div class="feature-card">
+                            <h4>Tarjetas de Estadísticas</h4>
+                            <ul>
+                                <li>Adherencia global con tendencia</li>
+                                <li>Racha actual (días consecutivos)</li>
+                                <li>Medicamentos por adherencia</li>
+                                <li>Análisis de horarios</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h3>Filtros Avanzados</h3>
+                    <p>El usuario puede filtrar su historial por:</p>
+                    <ul>
+                        <li><strong>Rango de fechas:</strong> Última semana, mes, 3 meses, o personalizado</li>
+                        <li><strong>Medicamento específico:</strong> Ver adherencia por medicamento</li>
+                        <li><strong>Por estado:</strong> Solo tomados, retrasados, no tomados, o saltados</li>
+                    </ul>
+
+                    <h3>Exportación de Reportes</h3>
+                    <p>Funcionalidad crítica para compartir con médicos. El usuario puede:</p>
+                    <ol>
+                        <li>Seleccionar rango de fechas y medicamentos</li>
+                        <li>Incluir/excluir estadísticas y gráficos</li>
+                        <li>Elegir formato: PDF o Excel</li>
+                        <li>Enviar directamente al médico vinculado o compartir por otras apps</li>
+                    </ol>
+
+                    <div class="highlight-box">
+                        <strong>Edición de Registros Históricos</strong>
+                        <p>Si el usuario necesita corregir un registro (por ejemplo, olvidó confirmarlo), puede editarlo pero debe:</p>
+                        <ul>
+                            <li>Proporcionar una nota explicativa</li>
+                            <li>El registro se marca como "Editado por usuario"</li>
+                            <li>Se guarda el timestamp de la edición</li>
+                            <li>Mantiene transparencia e integridad de datos</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="diagram-placeholder">
+                    <h4>Diagrama de Flujo 4</h4>
+                    <p>Genera este diagrama usando el archivo:</p>
+                    <code>04_consultar_historial.puml</code>
+                </div>
+            </div>
+
+            <!-- FLUJO 5 -->
+            <div class="flow-section">
+                <div class="flow-header mobile">
+                    <h2>
+                        <div class="flow-icon">🔗</div>
+                        <span>Flujo 5: Vincular con Médico</span>
+                    </h2>
+                    <div class="flow-meta">
+                        <div class="meta-item">
+                            <strong>Plataforma:</strong> App Móvil (Paciente)
+                        </div>
+                        <div class="meta-item">
+                            <strong>Pantallas:</strong> 6
+                        </div>
+                        <div class="meta-item">
+                            <strong>Tiempo estimado:</strong> 2-5 minutos
+                        </div>
+                        <div class="meta-item">
+                            <strong>Archivo:</strong> <code>05_vincular_medico.puml</code>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flow-description">
+                    <h3>Objetivo del Flujo</h3>
+                    <p>Establecer una conexión segura entre el paciente y su médico para compartir datos de adherencia de forma controlada.</p>
+
+                    <h3>Descripción Detallada</h3>
+                    
+                    <div class="key-features">
+                        <div class="feature-card">
+                            <h4>Con Código de Vinculación</h4>
+                            <ul>
+                                <li>Usuario ingresa código formato MED-XXXX-XXXX</li>
+                                <li>Sistema valida existencia y vigencia</li>
+                                <li>Muestra datos del médico para confirmación</li>
+                                <li>Envía solicitud al médico</li>
+                                <li>Notifica al paciente cuando se acepta</li>
+                            </ul>
+                        </div>
+                        <div class="feature-card">
+                            <h4>Sin Código</h4>
+                            <ul>
+                                <li>Sistema genera mensaje plantilla</li>
+                                <li>Usuario lo comparte por WhatsApp, Email, o SMS</li>
+                                <li>Médico genera código desde su dashboard</li>
+                                <li>Paciente vuelve e ingresa el código</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h3>Características del Código</h3>
+                    <ul>
+                        <li><strong>Formato único:</strong> MED-XXXX-XXXX</li>
+                        <li><strong>Validez:</strong> 30 días desde generación</li>
+                        <li><strong>Un solo uso:</strong> Se invalida al ser utilizado</li>
+                        <li><strong>Seguridad:</strong> Verificación en ambos lados</li>
+                    </ul>
+
+                    <h3>Proceso de Vinculación</h3>
+                    <ol>
+                        <li>Paciente ingresa código válido</li>
+                        <li>Sistema muestra tarjeta del médico con foto, nombre, especialidad, institución</li>
+                        <li>Paciente confirma "¿Es este tu médico?"</li>
+                        <li>Se envía solicitud al dashboard del médico</li>
+                        <li>Médico revisa y acepta/rechaza en máximo 7 días</li>
+                        <li>Si acepta: notificación push al paciente + inicio de sincronización</li>
+                        <li>Si rechaza: notificación con razón (opcional) + sugerencias</li>
+                    </ol>
+
+                    <div class="highlight-box success">
+                        <strong>Control Total del Paciente</strong>
+                        <p>El paciente tiene control absoluto sobre la vinculación:</p>
+                        <ul>
+                            <li>Puede ver exactamente qué datos se comparten</li>
+                            <li>Puede pausar la compartición temporalmente</li>
+                            <li>Puede desvincular en cualquier momento</li>
+                            <li>El médico NO puede modificar medicamentos</li>
+                            <li>El médico NO accede a datos sin consentimiento</li>
+                        </ul>
+                    </div>
+
+                    <h3>Gestión Post-Vinculación</h3>
+                    <p>Una vez vinculado, el paciente puede:</p>
+                    <ul>
+                        <li><strong>Ver datos compartidos:</strong> Lista de qué información ve el médico</li>
+                        <li><strong>Pausar compartición:</strong> Detiene sincronización sin desvincular</li>
+                        <li><strong>Desvincular:</strong> Termina la conexión (requiere confirmación)</li>
+                    </ul>
+                </div>
+
+                <div class="diagram-placeholder">
+                    <h4>Diagrama de Flujo 5</h4>
+                    <p>Genera este diagrama usando el archivo:</p>
+                    <code>05_vincular_medico.puml</code>
+                </div>
+            </div>
+
+            <!-- FLUJO 6 -->
+            <div class="flow-section">
+                <div class="flow-header web">
+                    <h2>
+                        <div class="flow-icon">👨‍⚕️</div>
+                        <span>Flujo 6: Registro y Verificación Profesional</span>
+                    </h2>
+                    <div class="flow-meta">
+                        <div class="meta-item">
+                            <strong>Plataforma:</strong> Dashboard Web (Médico)
+                        </div>
+                        <div class="meta-item">
+                            <strong>Pasos:</strong> 3 etapas
+                        </div>
+                        <div class="meta-item">
+                            <strong>Tiempo estimado:</strong> 5-10 minutos (+ verificación)
+                        </div>
+                        <div class="meta-item">
+                            <strong>Archivo:</strong> <code>06_registro_medico.puml</code>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flow-description">
+                    <h3>Objetivo del Flujo</h3>
+                    <p>Verificar la identidad profesional de médicos antes de permitirles acceso al dashboard de monitoreo de pacientes, cumpliendo con regulaciones de privacidad de datos médicos (HIPAA).</p>
+
+                    <h3>Formulario de Registro - 3 Pasos</h3>
+                    
+                    <div class="key-features">
+                        <div class="feature-card">
+                            <h4>Paso 1: Datos Personales</h4>
+                            <ul>
+                                <li>Nombre completo</li>
+                                <li>Email profesional</li>
+                                <li>Contraseña segura (8+ caracteres)</li>
+                                <li>Confirmación de contraseña</li>
+                            </ul>
+                        </div>
+                        <div class="feature-card">
+                            <h4>Paso 2: Datos Profesionales</h4>
+                            <ul>
+                                <li>Especialidad (dropdown)</li>
+                                <li>Número de registro médico</li>
+                                <li>País de registro</li>
+                                <li>Institución/Clínica</li>
+                                <li>Teléfono de contacto</li>
+                            </ul>
+                        </div>
+                        <div class="feature-card">
+                            <h4>Paso 3: Verificación</h4>
+                            <ul>
+                                <li>Tarjeta profesional (obligatorio)</li>
+                                <li>Certificado vigencia (obligatorio)</li>
+                                <li>Carnet institucional (opcional)</li>
+                                <li>Formatos: PDF, JPG, PNG</li>
+                                <li>Tamaño máximo: 5MB por archivo</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h3>Proceso de Verificación</h3>
+                    
+                    <div class="highlight-box">
+                        <strong>Verificación Automática (2 minutos)</strong>
+                        <p>Si el médico usa email institucional (@hospital.com, @clinica.com, @universidad.edu) Y su número de registro es válido en la base de datos oficial:</p>
+                        <ul>
+                            <li>✓ Aprobación AUTOMÁTICA</li>
+                            <li>✓ Cuenta activada inmediatamente</li>
+                            <li>✓ Email de aprobación enviado</li>
+                            <li>✓ Puede hacer login de inmediato</li>
+                        </ul>
+                    </div>
+
+                    <div class="highlight-box warning">
+                        <strong>Verificación Manual (6-48 horas)</strong>
+                        <p>Si el médico usa email personal (Gmail, Outlook, etc.) o hay inconsistencias:</p>
+                        <ul>
+                            <li>⏳ Cuenta entra en cola de revisión</li>
+                            <li>👨‍💼 Equipo MediMind revisa documentos manualmente</li>
+                            <li>📧 Email de confirmación al aprobarse</li>
+                            <li>❌ Si se rechaza, se explican las razones y se ofrece reenvío</li>
+                        </ul>
+                    </div>
+
+                    <h3>Primer Acceso al Dashboard</h3>
+                    <p>Una vez aprobado, el médico accede a:</p>
+                    <ol>
+                        <li><strong>Pantalla de bienvenida:</strong> Mensaje de confirmación</li>
+                        <li><strong>Tutorial opcional:</strong> Tour guiado de 5 minutos</li>
+                        <li><strong>Dashboard vacío:</strong> Sin pacientes todavía</li>
+                        <li><strong>CTA principal:</strong> "Genera tu primer código de vinculación"</li>
+                        <li><strong>Generación de código:</strong> Sistema crea código MED-XXXX-XXXX único</li>
+                        <li><strong>Opciones para compartir:</strong> Copiar, email, QR code, imprimir</li>
+                    </ol>
+
+                    <div class="highlight-box success">
+                        <strong>Decisión de Diseño: Verificación Profesional</strong>
+                        <p>La verificación exhaustiva es crítica porque:</p>
+                        <ul>
+                            <li><strong>Cumplimiento legal:</strong> HIPAA y regulaciones locales</li>
+                            <li><strong>Confianza del paciente:</strong> Saber que comparten con médico real</li>
+                            <li><strong>Seguridad:</strong> Prevenir acceso no autorizado a datos médicos</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="diagram-placeholder">
+                    <h4>Diagrama de Flujo 6</h4>
+                    <p>Genera este diagrama usando el archivo:</p>
+                    <code>06_registro_medico.puml</code>
+                </div>
+            </div>
+
+            <!-- FLUJO 7 -->
+            <div class="flow-section">
+                <div class="flow-header web">
+                    <h2>
+                        <div class="flow-icon">📈</div>
+                        <span>Flujo 7: Monitoreo de Pacientes</span>
+                    </h2>
+                    <div class="flow-meta">
+                        <div class="meta-item">
+                            <strong>Plataforma:</strong> Dashboard Web (Médico)
+                        </div>
+                        <div class="meta-item">
+                            <strong>Pantallas:</strong> 8
+                        </div>
+                        <div class="meta-item">
+                            <strong>Archivo:</strong> <code>07_monitoreo_pacientes.puml</code>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flow-description">
+                    <h3>Objetivo del Flujo</h3>
+                    <p>Proporcionar a los médicos una vista completa y accionable del cumplimiento de tratamiento de sus pacientes vinculados.</p>
+
+                    <h3>Dashboard Principal</h3>
+                    
+                    <div class="key-features">
+                        <div class="feature-card">
+                            <h4>KPIs Principales</h4>
+                            <ul>
+                                <li>Total de pacientes vinculados</li>
+                                <li>Alertas pendientes (badge rojo)</li>
+                                <li>Adherencia promedio de todos</li>
+                                <li>Pacientes en riesgo (<70%)</li>
+                            </ul>
+                        </div>
+                        <div class="feature-card">
+                            <h4>Tabla de Pacientes</h4>
+                            <ul>
+                                <li>Nombre (o anónimo si configurado)</li>
+                                <li>Edad del paciente</li>
+                                <li>% adherencia últimos 7 días</li>
+                                <li>Indicador 🟢🟡🔴 por nivel</li>
+                                <li>Cantidad de medicamentos activos</li>
+                                <li>Última conexión del paciente</li>
+                            </ul>
+                        </div>
+                        <div class="feature-card">
+                            <h4>Filtros Disponibles</h4>
+                            <ul>
+                                <li>Solo pacientes en riesgo</li>
+                                <li>Por rango de adherencia</li>
+                                <li>Por condición médica</li>
+                                <li>Por período de tiempo</li>
+                                <li>Búsqueda por nombre</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h3>Código de Colores por Adherencia</h3>
+                    <ul>
+                        <li><strong>🟢 Verde (≥85%):</strong> Excelente adherencia, bajo riesgo</li>
+                        <li><strong>🟡 Amarillo (70-84%):</strong> Adherencia aceptable, monitorear</li>
+                        <li><strong>🔴 Rojo (<70%):</strong> En riesgo, requiere intervención</li>
+                    </ul>
+
+                    <h3>Vista Detallada de Paciente</h3>
+                    <p>Al hacer click en un paciente, el médico accede a:</p>
+                    <ol>
+                        <li><strong>Perfil:</strong> Datos básicos, fecha vinculación, condiciones médicas</li>
+                        <li><strong>Adherencia:</strong> % grande, gráfico 30 días, tendencia</li>
+                        <li><strong>Medicamentos activos:</strong> Tabla con adherencia por medicamento</li>
+                        <li><strong>Historial reciente:</strong> Timeline de últimos 14 días</li>
+                        <li><strong>Alertas:</strong> Lista de alertas activas con timestamps</li>
+                    </ol>
+
+                    <h3>Sistema de Alertas Automáticas</h3>
+                    <p>El sistema genera alertas cuando detecta:</p>
+                    <ul>
+                        <li>⚠️ <strong>Adherencia <70%</strong> por 3+ días consecutivos</li>
+                        <li>📵 <strong>Sin conexión</strong> por 7+ días</li>
+                        <li>🔔 <strong>Medicamento olvidado</strong> >3 veces en una semana</li>
+                        <li>⛔ <strong>Paciente pausó/desvinculó</strong> compartición</li>
+                    </ul>
+
+                    <h3>Acciones sobre Paciente</h3>
+                    <div class="key-features">
+                        <div class="feature-card">
+                            <h4>Ver historial completo</h4>
+                            <ul>
+                                <li>Calendario interactivo</li>
+                                <li>Filtros de fecha</li>
+                                <li>Exportar como PDF</li>
+                            </ul>
+                        </div>
+                        <div class="feature-card">
+                            <h4>Contactar paciente</h4>
+                            <ul>
+                                <li>Ver email registrado</li>
+                                <li>Generar mensaje plantilla</li>
+                                <li>Marcar para seguimiento</li>
+                            </ul>
+                        </div>
+                        <div class="feature-card">
+                            <h4>Gestión</h4>
+                            <ul>
+                                <li>Agregar nota clínica privada</li>
+                                <li>Generar reporte completo</li>
+                                <li>Desvincular paciente</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>Nota Importante: Privacidad</strong>
+                        <p>No hay comunicación directa paciente-médico desde la app por razones de privacidad y regulación. El médico ve el email registrado pero debe contactar por canales oficiales de su institución.</p>
+                    </div>
+                </div>
+
+                <div class="diagram-placeholder">
+                    <h4>Diagrama de Flujo 7</h4>
+                    <p>Genera este diagrama usando el archivo:</p>
+                    <code>07_monitoreo_pacientes.puml</code>
+                </div>
+            </div>
+
+            <!-- FLUJO 8 -->
+            <div class="flow-section">
+                <div class="flow-header web">
+                    <h2>
+                        <div class="flow-icon">✅</div>
+                        <span>Flujo 8: Aceptar Solicitud de Vinculación</span>
+                    </h2>
+                    <div class="flow-meta">
+                        <div class="meta-item">
+                            <strong>Plataforma:</strong> Dashboard Web (Médico)
+                        </div>
+                        <div class="meta-item">
+                            <strong>Tiempo estimado:</strong> 1-2 minutos
+                        </div>
+                        <div class="meta-item">
+                            <strong>Archivo:</strong> <code>08_aceptar_vinculacion.puml</code>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flow-description">
+                    <h3>Objetivo del Flujo</h3>
+                    <p>Permitir al médico revisar y aprobar/rechazar solicitudes de vinculación de pacientes de manera eficiente y segura.</p>
+
+                    <h3>Notificación de Solicitud</h3>
+                    <p>Cuando un paciente usa un código de vinculación, el médico recibe:</p>
+                    <ul>
+                        <li>🔔 <strong>Badge numérico</strong> en icono de campana</li>
+                        <li>📢 <strong>Banner en dashboard:</strong> "Nueva solicitud de [Nombre Paciente]"</li>
+                        <li>📧 <strong>Email (opcional):</strong> Notificación por correo</li>
+                    </ul>
+
+                    <h3>Modal de Solicitud</h3>
+                    <p>El médico hace click y ve una tarjeta con:</p>
+                    <ul>
+                        <li>Nombre completo del paciente</li>
+                        <li>Edad y género</li>
+                        <li>Fecha de solicitud</li>
+                        <li>Código usado (para referencia)</li>
+                        <li>Condiciones médicas declaradas (si aplica)</li>
+                        <li>Mensaje del paciente (si agregó uno)</li>
+                    </ul>
+
+                    <h3>Opciones del Médico</h3>
+                    
+                    <div class="key-features">
+                        <div class="feature-card">
+                            <h4>Opción 1: Aceptar ✓</h4>
+                            <ul>
+                                <li>Modal de confirmación con términos</li>
+                                <li>Sistema procesa vinculación</li>
+                                <li>Activa sincronización automática</li>
+                                <li>Notifica al paciente (push + email)</li>
+                                <li>Paciente aparece en lista inmediatamente</li>
+                            </ul>
+                        </div>
+                        <div class="feature-card">
+                            <h4>Opción 2: Rechazar ✗</h4>
+                            <ul>
+                                <li>Confirmación de rechazo</li>
+                                <li>Opción de agregar razón visible para paciente</li>
+                                <li>Notifica al paciente con razón</li>
+                                <li>Sugerencias para resolver</li>
+                                <li>Solicitud eliminada de lista</li>
+                            </ul>
+                        </div>
+                        <div class="feature-card">
+                            <h4>Opción 3: Solicitar info ℹ️</h4>
+                            <ul>
+                                <li>Médico escribe qué necesita verificar</li>
+                                <li>Paciente recibe notificación</li>
+                                <li>Marca como "Pendiente de información"</li>
+                                <li>Expira en 7 días si no hay respuesta</li>
+                                <li>Médico puede aceptar/rechazar después</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h3>Confirmación al Aceptar</h3>
+                    <p>El sistema muestra claramente:</p>
+                    <div class="highlight-box success">
+                        <strong>Al aceptar esta vinculación:</strong>
+                        <p><strong>El médico PODRÁ:</strong></p>
+                        <ul>
+                            <li>✓ Monitorear adherencia en tiempo real</li>
+                            <li>✓ Recibir alertas automáticas de no cumplimiento</li>
+                            <li>✓ Ver historial de tomas</li>
+                            <li>✓ Generar reportes</li>
+                        </ul>
+                        <p><strong>El médico NO PODRÁ:</strong></p>
+                        <ul>
+                            <li>✗ Modificar medicamentos del paciente</li>
+                            <li>✗ Acceder a datos sin consentimiento</li>
+                            <li>✗ Impedir que paciente se desvincule</li>
+                        </ul>
+                    </div>
+
+                    <h3>Gestión de Múltiples Solicitudes</h3>
+                    <p>Si el médico tiene varias solicitudes pendientes:</p>
+                    <ul>
+                        <li>Tabla ordenada por fecha de solicitud</li>
+                        <li>Filtros: Nuevas, Pendientes de info, Todas</li>
+                        <li>Contador en sidebar</li>
+                        <li>Opción "Revisar siguiente" para eficiencia</li>
+                        <li>Atajos de teclado: Enter=Aceptar, R=Rechazar, I=Info, →=Siguiente</li>
+                    </ul>
+
+                    <h3>Historial de Solicitudes</h3>
+                    <p>Para auditoría y cumplimiento, el médico puede ver:</p>
+                    <ul>
+                        <li>Todas las solicitudes aceptadas (fecha, paciente)</li>
+                        <li>Solicitudes rechazadas (fecha, razón)</li>
+                        <li>Solicitudes expiradas (fecha)</li>
+                        <li>Búsqueda por nombre o rango de fechas</li>
+                        <li>Exportar historial como PDF/Excel</li>
+                    </ul>
+                </div>
+
+                <div class="diagram-placeholder">
+                    <h4>Diagrama de Flujo 8</h4>
+                    <p>Genera este diagrama usando el archivo:</p>
+                    <code>08_aceptar_vinculacion.puml</code>
+                </div>
+            </div>
+
+            <!-- FLUJO 9 -->
+            <div class="flow-section">
+                <div class="flow-header error">
+                    <h2>
+                        <div class="flow-icon">📶</div>
+                        <span>Flujo 9: Manejo de Pérdida de Conexión (Offline)</span>
+                    </h2>
+                    <div class="flow-meta">
+                        <div class="meta-item">
+                            <strong>Plataforma:</strong> App Móvil (Paciente)
+                        </div>
+                        <div class="meta-item">
+                            <strong>Tipo:</strong> Manejo de Errores
+                        </div>
+                        <div class="meta-item">
+                            <strong>Archivo:</strong> <code>09_manejo_offline.puml</code>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flow-description">
+                    <h3>Objetivo del Flujo</h3>
+                    <p>Garantizar que la app siga siendo funcional cuando no hay conexión a internet, manteniendo la experiencia del usuario y sincronizando datos cuando se restablece la conexión.</p>
+
+                    <h3>Detección de Pérdida de Conexión</h3>
+                    <p>Cuando el sistema detecta pérdida de conexión:</p>
+                    <ul>
+                        <li>🔴 Registra timestamp de desconexión</li>
+                        <li>📶 Muestra banner discreto: "Sin conexión - Trabajando offline"</li>
+                        <li>🎨 Banner no intrusivo (parte superior, color neutro, se puede cerrar)</li>
+                        <li>✅ Usuario puede seguir usando la app normalmente</li>
+                    </ul>
+
+                    <h3>Funcionalidad Offline</h3>
+                    
+                    <div class="key-features">
+                        <div class="feature-card">
+                            <h4>✅ DISPONIBLE Offline</h4>
+                            <ul>
+                                <li>Confirmar toma de medicamento</li>
+                                <li>Ver historial de adherencia</li>
+                                <li>Agregar medicamento (manual)</li>
+                                <li>Modificar horarios</li>
+                                <li>Ver estadísticas locales</li>
+                            </ul>
+                        </div>
+                        <div class="feature-card">
+                            <h4>❌ NO DISPONIBLE Offline</h4>
+                            <ul>
+                                <li>Verificar interacciones medicamentosas</li>
+                                <li>Escanear código de barras</li>
+                                <li>OCR de receta médica</li>
+                                <li>Vincular con médico</li>
+                                <li>Sincronizar con dashboard médico</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h3>Cola de Sincronización</h3>
+                    <p>El sistema mantiene una cola de operaciones pendientes:</p>
+                    <ol>
+                        <li>Confirmaciones de toma (con timestamp exacto)</li>
+                        <li>Medicamentos agregados (todos los datos)</li>
+                        <li>Horarios modificados (cambios específicos)</li>
+                        <li>Registros editados (nueva información)</li>
+                        <li>Medicamentos eliminados (IDs)</li>
+                    </ol>
+
+                    <p>La cola se almacena en SQLite local y persiste entre cierres de app. El usuario ve un indicador:</p>
+                    <div class="highlight-box warning">
+                        <strong>🔄 [N] acciones pendientes de sincronización</strong>
+                    </div>
+
+                    <h3>Proceso de Sincronización</h3>
+                    <p>Cuando se detecta reconexión, el sistema ejecuta 4 pasos:</p>
+
+                    <ol>
+                        <li><strong>Descargar datos del servidor:</strong> Obtener últimas actualizaciones</li>
+                        <li><strong>Detectar conflictos:</strong> Comparar versiones local vs servidor</li>
+                        <li><strong>Resolver conflictos:</strong> Priorizar timestamp más reciente o permitir decisión del usuario</li>
+                        <li><strong>Enviar cambios locales:</strong> Procesar cola de operaciones por lotes</li>
+                    </ol>
+
+                    <h3>Resolución de Conflictos</h3>
+                    <div class="highlight-box">
+                        <strong>Política de Conflictos</strong>
+                        <ul>
+                            <li><strong>Mismo registro editado:</strong> Timestamp más reciente gana</li>
+                            <li><strong>Medicamento eliminado en servidor:</strong> Verificar si usuario lo modificó localmente → Mostrar diálogo</li>
+                            <li><strong>Datos inconsistentes:</strong> Forzar sincronización completa desde servidor</li>
+                        </ul>
+                    </div>
+
+                    <h3>Reintentos y Errores</h3>
+                    <p>Para cada operación de sincronización:</p>
+                    <ul>
+                        <li>✓ <strong>Exitosa:</strong> Marcar como sincronizada, eliminar de cola</li>
+                        <li>⚠️ <strong>Error:</strong> Mantener en cola, incrementar contador de reintentos</li>
+                        <li>❌ <strong>>3 reintentos:</strong> Mostrar alerta al usuario con opciones: Reintentar ahora / Descartar / Intentar más tarde</li>
+                    </ul>
+
+                    <h3>Casos Especiales</h3>
+                    
+                    <div class="highlight-box warning">
+                        <strong>⚠️ Offline Prolongado (>24 horas)</strong>
+                        <p>Advertencia al usuario:</p>
+                        <ul>
+                            <li>No se verifican interacciones medicamentosas</li>
+                            <li>Dashboard médico está desactualizado</li>
+                            <li>Datos podrían estar obsoletos</li>
+                        </ul>
+                    </div>
+
+                    <div class="highlight-box warning">
+                        <strong>🚨 Offline Crítico (>7 días)</strong>
+                        <p>Advertencia crítica:</p>
+                        <ul>
+                            <li>Datos no sincronizados por más de una semana</li>
+                            <li>Médico no ve adherencia del paciente</li>
+                            <li>Riesgo de pérdida de información</li>
+                            <li>Ofrecer diagnosticar problema de conexión</li>
+                        </ul>
+                    </div>
+
+                    <h3>Finalización</h3>
+                    <p>Una vez completada la sincronización:</p>
+                    <ul>
+                        <li>✓ Banner: "Todo actualizado" (se oculta en 3 segundos)</li>
+                        <li>🔄 Contador vuelve a 0</li>
+                        <li>✅ Todas las funciones disponibles nuevamente</li>
+                        <li>📊 Métricas enviadas para mejorar el sistema</li>
+                    </ul>
+                </div>
+
+                <div class="diagram-placeholder">
+                    <h4>Diagrama de Flujo 9</h4>
+                    <p>Genera este diagrama usando el archivo:</p>
+                    <code>09_manejo_offline.puml</code>
+                </div>
+            </div>
+
+        </div>
+
+        <footer>
+            <p><strong>MediMind - User Flows Completos</strong></p>
+            <p>Proyecto Final de UX - Coursera</p>
+            <p>Febrero 2026</p>
+        </footer>
+    </div>
+</body>
+</html>

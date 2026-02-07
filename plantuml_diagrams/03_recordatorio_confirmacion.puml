@@ -1,0 +1,165 @@
+@startuml
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam activityBackgroundColor #FFF3E0
+skinparam activityBorderColor #F57C00
+skinparam activityFontSize 12
+skinparam arrowColor #F57C00
+
+title Flujo 3: Recordatorio y Confirmación de Toma - App Móvil
+
+start
+
+:Llega hora programada medicamento;
+:Sistema envía notificación push;
+
+:Notificación muestra:
+- Nombre medicamento
+- Dosis a tomar
+- 3 botones de acción;
+
+partition "Opciones de Usuario" {
+  if (¿Acción del usuario?) then (Tap "Tomado")
+    :Abrir app en pantalla confirmación;
+    :Registrar timestamp exacto;
+    :Calcular adherencia:
+    - A tiempo (±5 min) = 100%
+    - Retraso <30 min = 90%
+    - Retraso 30-60 min = 70%;
+    
+    :Actualizar stock restante;
+    if (¿Stock bajo? (<3 dosis)) then (Sí)
+      :Mostrar recordatorio compra;
+    endif
+    
+    :Mostrar confirmación visual:
+    ✓ "Registrado correctamente"
+    + Hora exacta
+    + Próxima dosis;
+    
+    :Actualizar historial;
+    :Actualizar calendario;
+    :Sincronizar con dashboard médico;
+    
+  elseif (Tap "Posponer") then
+    :Abrir modal selección tiempo;
+    :Opciones:
+    - 5 minutos
+    - 15 minutos
+    - 30 minutos
+    - 1 hora;
+    
+    if (¿Tiempo seleccionado?) then (Sí)
+      :Registrar pospuesto;
+      :Incrementar contador pospuestos;
+      
+      if (¿Es el 3er pospuesto?) then (Sí)
+        :Mostrar advertencia:
+        "Este es tu último pospuesto.
+        Siguiente notificación será la última";
+        
+        :Programar notificación final;
+        :Afectar adherencia (-10%);
+        
+      elseif (¿Más de 3 pospuestos?) then (Sí)
+        :Marcar automáticamente como NO tomado;
+        :Registrar en historial;
+        :Adherencia = 0% para esta dosis;
+        
+        if (¿Médico vinculado?) then (Sí)
+          :Enviar alerta a médico:
+          "Paciente no tomó medicamento
+          después de 3+ pospuestos";
+        endif
+        
+        :Resetear contador pospuestos;
+        stop
+      else
+        :Programar nueva notificación;
+        :Adherencia afectada (-5%);
+      endif
+    endif
+    
+  elseif (Tap "Ver detalles") then
+    :Abrir app en pantalla medicamento;
+    :Mostrar información completa:
+    - Nombre y dosis
+    - Instrucciones especiales
+    - Foto medicamento
+    - Indicaciones médicas
+    - Efectos secundarios comunes;
+    
+    :Usuario puede entonces:
+    - Confirmar toma
+    - Posponer
+    - Saltar (con justificación);
+    
+  else (Ignora notificación)
+    :Esperar 10 minutos;
+    :Enviar recordatorio insistente:
+    - Sonido más fuerte
+    - Vibración más larga
+    - Notificación persistente;
+    
+    if (¿Usuario responde?) then (No)
+      :Esperar 10 minutos más;
+      :Enviar ÚLTIMA notificación:
+      "⚠️ ÚLTIMA OPORTUNIDAD
+      Confirma que tomaste tu medicamento";
+      
+      if (¿Usuario responde?) then (No)
+        :Esperar 1 hora total;
+        :Marcar automáticamente como NO tomado;
+        :Adherencia = 0%;
+        :Registrar en historial;
+        
+        if (¿Médico vinculado?) then (Sí)
+          :Enviar alerta a médico;
+        endif
+        
+        if (¿Patrón frecuente? (>3 veces/semana)) then (Sí)
+          if (¿Contacto emergencia configurado?) then (Sí)
+            :Enviar alerta contacto emergencia:
+            "Usuario no está tomando medicamentos
+            según lo prescrito";
+          endif
+        endif
+        
+        stop
+      endif
+    endif
+  endif
+}
+
+partition "Acción Alternativa: Saltar Intencionalmente" {
+  :Usuario abre app;
+  :Navega a medicamento;
+  :Selecciona "Saltar esta dosis";
+  
+  :Modal de confirmación:
+  "¿Estás seguro que quieres
+  saltar esta dosis?";
+  
+  if (¿Confirma?) then (Sí)
+    :Solicitar razón;
+    :Opciones predefinidas:
+    1. Efectos secundarios
+    2. Olvidé medicamento en casa
+    3. Indicación médica
+    4. Otro (escribir);
+    
+    :Registrar como SALTADO INTENCIONALMENTE;
+    :Distinguir de "No tomado" por olvido;
+    :No afecta adherencia tan severamente (50%);
+    
+    if (¿Compartir con médico?) then (Sí)
+      :Enviar nota automática a médico
+      con razón seleccionada;
+    endif
+  endif
+}
+
+:Proceso completado;
+stop
+
+@enduml

@@ -1,0 +1,294 @@
+@startuml
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam activityBackgroundColor #FFCDD2
+skinparam activityBorderColor #D32F2F
+skinparam activityFontSize 12
+skinparam arrowColor #D32F2F
+
+title Flujo 9: Manejo de Pérdida de Conexión (Offline) - App Móvil
+
+start
+
+:Usuario usando app;
+:Conexión a internet se pierde;
+
+partition "Detección de Pérdida" {
+  :Sistema detecta pérdida de conexión;
+  :Timestamp de desconexión;
+  
+  :Mostrar banner discreto:
+  "📶 Sin conexión - Trabajando offline";
+  
+  :Banner no intrusivo:
+  - Parte superior
+  - Color neutro
+  - No bloquea contenido
+  - Se puede cerrar;
+  
+  note right
+    Usuario puede seguir
+    usando la app normalmente
+  end note
+}
+
+partition "Funcionalidad Offline" {
+  :App cambia a modo offline;
+  
+  :Funciones DISPONIBLES offline;
+  
+  :✅ Confirmar toma de medicamento;
+  :Guardar en cola local;
+  :Marcar timestamp local;
+  :Actualizar UI inmediatamente;
+  
+  :✅ Ver historial de adherencia;
+  :Cargar datos desde cache;
+  :Mostrar datos hasta última sync;
+  :Indicador "Datos del [fecha/hora]";
+  
+  :✅ Agregar medicamento;
+  :Permitir ingreso manual;
+  :Guardar en base datos local;
+  :Deshabilitar escaneo (requiere API);
+  :Deshabilitar OCR (requiere API);
+  
+  :✅ Modificar horarios;
+  :Cambios guardados localmente;
+  :Reprogramar alarmas locales;
+  
+  :✅ Ver estadísticas;
+  :Calcular con datos locales;
+  :Mostrar hasta última sync;
+  
+  :Funciones NO DISPONIBLES offline;
+  
+  :❌ Verificar interacciones medicamentosas;
+  :Mostrar mensaje:
+  "⚠️ Verificación de interacciones
+  requiere conexión a internet.
+  El medicamento se guardará pero
+  verifica interacciones al reconectar.";
+  
+  :❌ Escanear código de barras;
+  :Botón deshabilitado;
+  :Tooltip: "Requiere conexión";
+  
+  :❌ OCR de receta;
+  :Botón deshabilitado;
+  :Tooltip: "Requiere conexión";
+  
+  :❌ Vincular con médico;
+  :Pantalla muestra:
+  "Esta función requiere
+  conexión a internet";
+  
+  :❌ Sincronizar con dashboard médico;
+  :Datos no se envían en tiempo real;
+  :Se enviarán al reconectar;
+}
+
+partition "Cola de Sincronización" {
+  :Sistema mantiene cola de acciones;
+  
+  :Lista de operaciones pendientes:
+  1. Confirmación toma (timestamp)
+  2. Medicamento agregado (datos)
+  3. Horario modificado (cambios)
+  4. Registro editado (nueva data)
+  5. Medicamento eliminado (ID);
+  
+  :Almacenar en SQLite local;
+  :Persistir entre cierres de app;
+  
+  :UI muestra indicador:
+  "🔄 [N] acciones pendientes de sync";
+  
+  note right
+    Usuario sabe que hay
+    cambios sin sincronizar
+  end note
+}
+
+partition "Detección de Reconexión" {
+  :App detecta conexión restaurada;
+  
+  :Evento de red: ONLINE;
+  
+  :Banner actualizado:
+  "📶 Conexión restaurada - Sincronizando...";
+  
+  :Color cambia a azul/verde;
+  :Animación de progreso;
+}
+
+partition "Proceso de Sincronización" {
+  :Iniciar sincronización automática;
+  
+  :Paso 1: Descargar datos servidor;
+  :Obtener últimas actualizaciones:
+  - Medicamentos modificados desde servidor
+  - Nuevas alertas
+  - Cambios en vinculaciones;
+  
+  :Paso 2: Detectar conflictos;
+  
+  if (¿Hay conflictos?) then (Sí)
+    partition "Resolución de Conflictos" {
+      :Tipo de conflicto detectado;
+      
+      if (¿Tipo?) then (Mismo registro editado)
+        :Comparar timestamps;
+        
+        if (¿Cuál es más reciente?) then (Local)
+          :Priorizar cambios locales;
+          :Enviar al servidor;
+          :Actualizar servidor con versión local;
+          
+        else (Servidor)
+          :Priorizar cambios servidor;
+          :Actualizar local con versión servidor;
+          
+          :Notificar al usuario:
+          "ℹ️ Algunos datos fueron
+          actualizados desde el servidor
+          mientras estabas offline";
+        endif
+        
+      elseif (Medicamento eliminado en servidor) then
+        :Verificar si usuario lo modificó local;
+        
+        if (¿Modificado localmente?) then (Sí)
+          :Mostrar diálogo:
+          "⚠️ Conflicto detectado
+          
+          Este medicamento fue eliminado
+          pero tú lo modificaste offline.
+          
+          ¿Qué deseas hacer?
+          - Mantener tus cambios
+          - Eliminar el medicamento";
+          
+          :Usuario decide;
+        else (No)
+          :Eliminar de local automáticamente;
+        endif
+        
+      else (Otros conflictos)
+        :Política: Timestamp más reciente gana;
+        :Aplicar cambios;
+        :Registrar en log de auditoría;
+      endif
+    }
+  endif
+  
+  :Paso 3: Enviar cambios locales;
+  
+  :Procesar cola de operaciones:
+  1. Ordenar por timestamp
+  2. Agrupar por tipo
+  3. Enviar por lotes;
+  
+  :Por cada operación;
+  
+  if (¿Operación exitosa?) then (Sí)
+    :Marcar como sincronizada ✓;
+    :Eliminar de cola;
+    :Actualizar contador;
+    
+  else (Error)
+    :Registrar error;
+    :Mantener en cola;
+    :Incrementar contador de reintentos;
+    
+    if (¿Reintentos > 3?) then (Sí)
+      :Mostrar alerta al usuario:
+      "⚠️ No se pudo sincronizar
+      [tipo de acción]
+      
+      Razón: [mensaje de error]
+      
+      Opciones:
+      - Reintentar ahora
+      - Descartar cambios
+      - Intentar más tarde";
+      
+      :Usuario decide;
+    endif
+  endif
+  
+  :Paso 4: Verificar integridad;
+  
+  :Comparar checksums;
+  :Validar consistencia datos;
+  
+  if (¿Datos íntegros?) then (No)
+    :Forzar sync completa;
+    :Descargar todo desde servidor;
+    :Actualizar base datos local;
+  endif
+}
+
+partition "Finalización" {
+  :Todas las operaciones procesadas;
+  
+  :Banner actualizado:
+  "✓ Todo actualizado";
+  
+  :Duración: 3 segundos;
+  :Luego se oculta automáticamente;
+  
+  :Contador vuelve a 0:
+  "🔄 0 acciones pendientes";
+  
+  :App en modo online normal;
+  :Todas las funciones disponibles;
+}
+
+partition "Caso Especial: Offline Prolongado" {
+  if (¿Offline > 24 horas?) then (Sí)
+    :Mostrar advertencia:
+    "⚠️ Sin conexión por más de 24h
+    
+    Algunas funciones están limitadas:
+    - No se verifica interacciones
+    - Dashboard médico desactualizado
+    - Datos podrían estar obsoletos
+    
+    Conecta a internet cuando puedas";
+    
+    if (¿Offline > 7 días?) then (Sí)
+      :Advertencia crítica:
+      "⚠️ ATENCIÓN
+      
+      Llevas más de 7 días sin conexión.
+      
+      - Tus datos no están sincronizados
+      - Tu médico no ve tu adherencia
+      - Podrías perder información
+      
+      Es crítico que te conectes pronto";
+      
+      :Ofrecer diagnosticar problema;
+    endif
+  endif
+}
+
+partition "Monitoreo de Calidad" {
+  :Sistema registra métricas:
+  - Duración offline
+  - Cantidad de operaciones en cola
+  - Conflictos detectados
+  - Errores de sincronización
+  - Tiempo de sincronización;
+  
+  :Enviar analytics (cuando online);
+  :Usar para mejorar el sistema;
+}
+
+:Proceso completado;
+:Usuario continúa usando app;
+
+stop
+
+@enduml

@@ -1,0 +1,180 @@
+@startuml
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam activityBackgroundColor #F3E5F5
+skinparam activityBorderColor #7B1FA2
+skinparam activityFontSize 12
+skinparam arrowColor #7B1FA2
+
+title Flujo 4: Consultar Historial - App Móvil
+
+start
+
+:Usuario en Home;
+:Tap "Historial" en barra navegación;
+
+:Pantalla Historial Adherencia;
+:Mostrar por defecto:
+- Vista calendario mes actual
+- % adherencia general
+- Gráfico de tendencia;
+
+partition "Visualización de Datos" {
+  :Calendario con marcadores:
+  ✓ Días completos (verde)
+  ⏰ Días con retrasos (amarillo)
+  ✗ Días con faltas (rojo)
+  ○ Días saltados (gris);
+  
+  :% Adherencia mostrado como:
+  - Número grande (95%)
+  - Barra de progreso
+  - Código color (Verde/Amarillo/Rojo);
+  
+  :Gráfico de tendencia (últimos 30 días):
+  - Línea de adherencia
+  - Promedio móvil
+  - Meta objetivo (80%);
+}
+
+if (¿Usuario toca día específico?) then (Sí)
+  :Expandir detalles del día;
+  :Mostrar lista de medicamentos:
+  - Hora programada
+  - Hora real de toma
+  - Estado (A tiempo/Tarde/No tomado)
+  - Diferencia en minutos;
+  
+  if (¿Usuario toca medicamento específico?) then (Sí)
+    :Mostrar modal con detalles:
+    - Nombre medicamento
+    - Dosis tomada
+    - Timestamp exacto
+    - Notas si existen
+    - Foto si existe;
+    
+    if (¿Usuario quiere editar?) then (Sí)
+      :Advertencia:
+      "Editar registros históricos
+      requiere justificación";
+      
+      :Solicitar nota explicativa;
+      :Marcar registro como "Editado por usuario";
+      :Guardar timestamp de edición;
+      :Actualizar registro;
+    endif
+  endif
+endif
+
+partition "Filtros y Búsqueda" {
+  :Usuario puede aplicar filtros;
+  
+  if (¿Filtro seleccionado?) then (Rango de fechas)
+    :Selector de fechas:
+    - Última semana
+    - Último mes
+    - Últimos 3 meses
+    - Personalizado;
+    
+    :Actualizar vista calendario;
+    :Recalcular estadísticas;
+    
+  elseif (Por medicamento específico) then
+    :Lista de medicamentos activos;
+    :Usuario selecciona uno o varios;
+    
+    :Filtrar historial solo
+    para medicamentos seleccionados;
+    
+    :Mostrar estadísticas específicas:
+    - % adherencia por medicamento
+    - Patrón de tomas
+    - Horas promedio de toma;
+    
+  elseif (Por estado) then
+    :Opciones:
+    - Solo tomados
+    - Solo retrasados
+    - Solo no tomados
+    - Solo saltados;
+    
+    :Aplicar filtro;
+    :Actualizar vista;
+  endif
+}
+
+partition "Análisis y Estadísticas" {
+  :Usuario scrollea a sección estadísticas;
+  
+  :Mostrar tarjetas informativas:
+  
+  CARD 1: Adherencia Global
+  - % total
+  - Tendencia (↑ ↓ →)
+  - Comparación mes anterior;
+  
+  CARD 2: Racha Actual
+  - Días consecutivos sin faltas
+  - Mejor racha histórica
+  - Motivación visual (🔥);
+  
+  CARD 3: Medicamentos
+  - Total activos
+  - Mejor adherencia
+  - Necesita atención;
+  
+  CARD 4: Horarios
+  - Hora más cumplida
+  - Hora más problemática
+  - Sugerencias;
+}
+
+partition "Exportar Reporte" {
+  :Usuario tap "Exportar";
+  
+  :Modal configuración reporte;
+  :Usuario selecciona:
+  - Rango de fechas
+  - Medicamentos a incluir
+  - Incluir estadísticas (Sí/No)
+  - Incluir gráficos (Sí/No)
+  - Formato (PDF/Excel);
+  
+  if (¿Confirma exportación?) then (Sí)
+    :Generando reporte...;
+    :Crear documento con:
+    - Encabezado (nombre, fecha)
+    - Tabla de adherencia
+    - Gráficos visuales
+    - Notas relevantes
+    - Pie de página (generado por MediMind);
+    
+    :Modal opciones de compartir;
+    
+    if (¿Acción?) then (Enviar a médico vinculado)
+      :Enviar automáticamente
+      al dashboard del médico;
+      :Confirmar envío;
+      
+    elseif (Compartir por) then
+      :Abrir selector de apps:
+      - Email
+      - WhatsApp
+      - Drive
+      - Otras;
+      
+    else (Guardar en dispositivo)
+      :Guardar en carpeta
+      /Documentos/MediMind/;
+      :Mostrar ubicación;
+    endif
+    
+    :Confirmación:
+    ✓ "Reporte exportado exitosamente";
+  endif
+}
+
+:Regresar a pantalla historial;
+stop
+
+@enduml

@@ -1,0 +1,264 @@
+@startuml
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam activityBackgroundColor #FFEBEE
+skinparam activityBorderColor #C62828
+skinparam activityFontSize 12
+skinparam arrowColor #C62828
+
+title Flujo 6: Registro y Verificación Profesional - Dashboard Web (Médico)
+
+start
+
+:Médico accede a medimind.com/medicos;
+
+:Página Landing Profesionales;
+:Mostrar beneficios:
+- Monitorear adherencia pacientes
+- Recibir alertas automáticas
+- Generar reportes
+- Sin costo para médicos;
+
+:Click "Registrarse como médico";
+
+partition "Formulario de Registro" {
+  :Página Registro Profesional;
+  
+  :Formulario Paso 1/3 - Datos Personales;
+  :Médico ingresa:
+  - Nombre completo
+  - Email
+  - Contraseña (8+ caracteres)
+  - Confirmar contraseña;
+  
+  if (¿Email válido?) then (No)
+    :Validación error:
+    "Email inválido";
+    stop
+  endif
+  
+  if (¿Contraseña segura?) then (No)
+    :Validación error:
+    "Contraseña debe tener:
+    - Mínimo 8 caracteres
+    - Al menos 1 mayúscula
+    - Al menos 1 número
+    - Al menos 1 símbolo";
+    stop
+  endif
+  
+  :Click "Siguiente";
+  
+  :Formulario Paso 2/3 - Datos Profesionales;
+  :Médico ingresa:
+  - Especialidad (dropdown)
+  - Número de registro médico
+  - País de registro
+  - Institución/Clínica
+  - Teléfono de contacto;
+  
+  if (¿Formato registro válido?) then (No)
+    :Validación según país;
+    :Mostrar formato esperado;
+    stop
+  endif
+  
+  :Click "Siguiente";
+  
+  :Formulario Paso 3/3 - Verificación;
+  :Instrucciones:
+  "Sube documentos para verificar
+  tu identidad profesional";
+  
+  :Campos de carga:
+  1. Tarjeta profesional (obligatorio)
+  2. Certificado vigencia registro (obligatorio)
+  3. Carnet institucional (opcional);
+  
+  :Médico sube archivos;
+  :Validar formatos (PDF/JPG/PNG);
+  :Validar tamaño (<5MB c/u);
+  
+  if (¿Documentos válidos?) then (No)
+    :Mostrar errores específicos;
+    stop
+  endif
+  
+  :Aceptar Términos y Condiciones;
+  :Checkbox:
+  "☐ Acepto los Términos de Servicio
+  y Política de Privacidad para
+  Profesionales de la Salud";
+  
+  if (¿Acepta términos?) then (No)
+    :No puede continuar;
+    stop
+  endif
+  
+  :Click "Completar Registro";
+}
+
+partition "Proceso de Verificación" {
+  :Enviar email confirmación;
+  
+  :Email contiene:
+  - Link verificación email
+  - Válido por 24 horas;
+  
+  if (¿Médico verifica email?) then (No)
+    :Esperar hasta 24h;
+    if (¿Verifica antes de expirar?) then (No)
+      :Cuenta no activada;
+      :Enviar email:
+      "Tu registro expiró.
+      Inicia el proceso nuevamente";
+      stop
+    endif
+  endif
+  
+  :Email verificado ✓;
+  
+  :Sistema analiza documentos;
+  
+  if (¿Tipo de email?) then (Institucional)
+    partition "Verificación Automática" {
+      :Detectar dominio institucional:
+      - @hospital.com
+      - @clinica.com
+      - @universidad.edu;
+      
+      :Validar número de registro
+      en base de datos oficial;
+      
+      if (¿Registro válido?) then (Sí)
+        :Aprobación AUTOMÁTICA ✓;
+        :Tiempo: <2 minutos;
+        
+        :Enviar email aprobación:
+        "🎉 ¡Verificación exitosa!
+        Tu cuenta está activa";
+        
+        :Activar cuenta inmediatamente;
+        :Permitir login;
+      else (No)
+        :Pasar a verificación manual;
+      endif
+    }
+    
+  else (Personal: Gmail, Outlook, etc.)
+    partition "Verificación Manual" {
+      :Agregar a cola revisión;
+      
+      :Email al médico:
+      "Gracias por registrarte.
+      
+      Tu cuenta está en proceso de
+      verificación. Nuestro equipo
+      revisará tus documentos en las
+      próximas 48 horas.
+      
+      Te notificaremos por email
+      cuando esté lista.";
+      
+      :Equipo MediMind revisa:
+      - Calidad documentos
+      - Validez registro médico
+      - Coincidencia datos;
+      
+      if (¿Documentos correctos?) then (Sí)
+        :Aprobar manualmente;
+        :Tiempo: 6-48 horas;
+        
+        :Enviar email aprobación;
+        :Activar cuenta;
+        
+      else (No)
+        :Rechazar registro;
+        
+        :Email con razones:
+        - Documentos ilegibles
+        - Registro no encontrado
+        - Datos inconsistentes
+        - Documentos vencidos;
+        
+        :Ofrecer opciones:
+        1. Resubir documentos
+        2. Contactar soporte
+        3. Intentar nuevamente;
+        
+        stop
+      endif
+    }
+  endif
+}
+
+partition "Primer Acceso" {
+  :Cuenta APROBADA;
+  :Médico hace login;
+  
+  :Pantalla Bienvenida;
+  :Mensaje:
+  "¡Bienvenido/a Dr./Dra. [Nombre]!
+  
+  Tu cuenta ha sido verificada
+  exitosamente";
+  
+  :Ofrecer tutorial opcional;
+  if (¿Iniciar tutorial?) then (Sí)
+    :Tour guiado 5 minutos:
+    1. Dashboard principal
+    2. Generar código vinculación
+    3. Ver solicitudes pacientes
+    4. Monitorear adherencia
+    5. Generar reportes;
+    
+  else (Saltar)
+    :Marcar "Tutorial disponible
+    en menú Ayuda";
+  endif
+  
+  :Dashboard inicial (vacío);
+  
+  :CTA destacado:
+  "🔗 Genera tu primer código
+  de vinculación
+  
+  Compártelo con tus pacientes
+  para comenzar a monitorearlos";
+  
+  :Click CTA;
+  :Abrir modal generación código;
+  
+  :Sistema genera código único:
+  - Formato: MED-XXXX-XXXX
+  - Válido: 30 días
+  - Un solo uso;
+  
+  :Modal muestra código grande;
+  :Opciones compartir:
+  - Copiar al portapapeles
+  - Enviar por email
+  - Generar QR code
+  - Imprimir;
+  
+  :Médico comparte código;
+  
+  :Dashboard actualizado;
+  :Sección "Códigos generados";
+  :Lista de códigos:
+  - Código
+  - Fecha generación
+  - Estado (Activo/Usado/Expirado)
+  - Usado por (si aplica);
+}
+
+:Dashboard listo para uso;
+:Médico puede:
+- Generar más códigos
+- Esperar solicitudes
+- Configurar preferencias
+- Ver perfil profesional;
+
+stop
+
+@enduml
