@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Investigación de Usuarios - MediMind">
+    <title>Investigación de Usuarios - MediMind</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #0ea5e9;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --bg-light: #f8fafc;
+            --bg-white: #ffffff;
+            --border-color: #e2e8f0;
+            --accent-color: #10b981;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.7;
+            color: var(--text-dark);
+            background-color: var(--bg-light);
+        }
+
+        /* Header */
+        .doc-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .doc-header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: white;
+            text-decoration: none;
+            margin-bottom: 1rem;
+            opacity: 0.9;
+            transition: opacity 0.2s;
+        }
+
+        .back-link:hover {
+            opacity: 1;
+        }
+
+        .doc-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .doc-subtitle {
+            font-size: 1.25rem;
+            opacity: 0.95;
+            font-weight: 300;
+        }
+
+        /* Document Container */
+        .doc-container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .doc-content {
+            background: var(--bg-white);
+            border-radius: 12px;
+            padding: 3rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Typography */
+        h1 {
+            font-size: 2rem;
+            color: var(--text-dark);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 0.5rem;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            color: var(--text-dark);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            color: var(--primary-color);
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        h4 {
+            font-size: 1.1rem;
+            color: var(--text-dark);
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+
+        strong {
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        em {
+            color: var(--text-light);
+        }
+
+        /* Lists */
+        ul, ol {
+            margin-left: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+        }
+
+        /* Info Boxes */
+        .info-box {
+            background: var(--bg-light);
+            border-left: 4px solid var(--primary-color);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 4px;
+        }
+
+        .info-box strong {
+            color: var(--primary-color);
+        }
+
+        /* Persona Cards */
+        .persona-card {
+            background: var(--bg-light);
+            border-radius: 8px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 2px solid var(--border-color);
+        }
+
+        .persona-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .persona-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .persona-title h3 {
+            margin: 0;
+            color: var(--primary-color);
+        }
+
+        .persona-subtitle {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        th {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        tr:hover {
+            background: var(--bg-light);
+        }
+
+        /* Horizontal Rules */
+        hr {
+            border: none;
+            border-top: 2px solid var(--border-color);
+            margin: 2rem 0;
+        }
+
+        /* Download Button */
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--accent-color);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 2rem;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .download-btn:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        .download-btn.btn-secondary {
+            background: var(--primary-color);
+        }
+
+        .download-btn.btn-secondary:hover {
+            background: #1d4ed8;
+        }
+
+        .download-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        /* Print Styles */
+        @media print {
+            .doc-header, .back-link, .download-btn {
+                display: none;
+            }
+            
+            .doc-content {
+                box-shadow: none;
+                padding: 0;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .doc-title {
+                font-size: 1.5rem;
+            }
+
+            .doc-content {
+                padding: 1.5rem;
+            }
+
+            .persona-header {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="doc-header">
+        <div class="doc-header-content">
+            <a href="./index.html" class="back-link">← Volver al inicio</a>
+            <h1 class="doc-title">MediMind: Gestión Inteligente de Medicamentos</h1>
+            <p class="doc-subtitle">Documento Consolidado de Investigación de Usuarios</p>
+        </div>
+    </div>
+
+    <!-- Document Content -->
+    <div class="doc-container">
+        <div class="doc-content">
+
+            <!-- Resumen Ejecutivo -->
+            <h1>1. RESUMEN EJECUTIVO</h1>
+
+            <div class="info-box">
+                <p><strong>Proyecto:</strong> MediMind - Sistema de Gestión Inteligente de Medicamentos</p>
+                <p><strong>Objetivo del Proyecto:</strong> Desarrollar una solución integral que asegure que pacientes con tratamientos complejos (polimedicación) tomen sus medicamentos en la dosis exacta, reduciendo errores de medicación y mejorando la adherencia terapéutica.</p>
+            </div>
+
+            <h3>Público Objetivo Principal:</h3>
+            <ul>
+                <li>Pacientes con enfermedades crónicas que requieren múltiples medicamentos diarios</li>
+                <li>Médicos tratantes que necesitan monitorear la adherencia de sus pacientes</li>
+            </ul>
+
+            <h3>Propuesta de Valor:</h3>
+            <p>Sistema multiplataforma que combina hardware (escaneo de medicamentos), servicios en la nube (verificación de interacciones medicamentosas), aplicación móvil (alertas y registro) y plataforma web (monitoreo médico).</p>
+
+            <hr>
+
+            <!-- Investigación de Contexto -->
+            <h1>2. INVESTIGACIÓN DE CONTEXTO</h1>
+
+            <h2>2.1 Definición del Problema</h2>
+
+            <p>La polimedicación (uso simultáneo de múltiples medicamentos) es un problema creciente en pacientes con enfermedades crónicas. Los principales desafíos identificados son:</p>
+
+            <h3>Problemática Principal:</h3>
+            <ul>
+                <li><strong>Olvidos frecuentes:</strong> Los pacientes olvidan tomar sus medicamentos según el horario prescrito</li>
+                <li><strong>Errores de dosis:</strong> Confusión sobre qué medicamento tomar y en qué cantidad</li>
+                <li><strong>Interacciones peligrosas:</strong> Desconocimiento de posibles interacciones entre medicamentos</li>
+                <li><strong>Falta de adherencia:</strong> Abandono del tratamiento por complejidad o efectos secundarios</li>
+                <li><strong>Monitoreo insuficiente:</strong> Los médicos carecen de información objetiva sobre el cumplimiento del tratamiento</li>
+            </ul>
+
+            <h3>Impacto del Problema:</h3>
+            <ul>
+                <li>Hospitalizaciones evitables por errores de medicación</li>
+                <li>Deterioro de la salud por falta de adherencia</li>
+                <li>Incremento en costos del sistema de salud</li>
+                <li>Pérdida de efectividad de los tratamientos</li>
+            </ul>
+
+            <h2>2.2 Investigación de Campo</h2>
+
+            <h3>Metodología Utilizada:</h3>
+            <ul>
+                <li>Entrevistas cualitativas con pacientes (n=15)</li>
+                <li>Entrevistas con médicos internistas y geriatras (n=8)</li>
+                <li>Observación encubierta en farmacias y consultorios</li>
+                <li>Análisis de literatura médica sobre adherencia terapéutica</li>
+                <li>Revisión de reportes de eventos adversos relacionados con medicación</li>
+            </ul>
+
+            <h3>Hallazgos Clave:</h3>
+
+            <h4>Desde la Perspectiva del Paciente:</h4>
+            <ol>
+                <li><strong>Complejidad del régimen:</strong> Pacientes toman entre 5-12 medicamentos diferentes al día</li>
+                <li><strong>Horarios variables:</strong> Algunos medicamentos requieren horarios específicos (antes/después de comidas, mañana/noche)</li>
+                <li><strong>Ansiedad y estrés:</strong> Temor constante a equivocarse con la medicación</li>
+                <li><strong>Necesidad de recordatorios:</strong> Las alarmas simples del teléfono no son suficientes</li>
+                <li><strong>Dificultad para leer etiquetas:</strong> Especialmente en adultos mayores con problemas de visión</li>
+            </ol>
+
+            <h4>Desde la Perspectiva del Médico:</h4>
+            <ol>
+                <li><strong>Información incompleta:</strong> No saben realmente si el paciente está tomando sus medicamentos</li>
+                <li><strong>Tiempo limitado:</strong> En consulta no hay tiempo suficiente para verificar adherencia en detalle</li>
+                <li><strong>Decisiones a ciegas:</strong> Ajustan dosis sin saber si el problema es falta de adherencia o efectividad</li>
+                <li><strong>Necesidad de datos objetivos:</strong> Requieren información confiable para tomar decisiones clínicas</li>
+                <li><strong>Preocupación por interacciones:</strong> Especialmente cuando pacientes ven múltiples especialistas</li>
+            </ol>
+
+            <h2>2.3 Contexto de Uso</h2>
+
+            <h3>Ambientes donde se utiliza el sistema:</h3>
+
+            <ol>
+                <li><strong>En casa (paciente):</strong>
+                    <ul>
+                        <li>Dormitorio: Al despertar y antes de dormir</li>
+                        <li>Cocina: Con las comidas</li>
+                        <li>Sala: Durante el día</li>
+                    </ul>
+                </li>
+                <li><strong>Consultorio médico:</strong>
+                    <ul>
+                        <li>Durante la consulta para revisar adherencia</li>
+                        <li>Al ajustar tratamientos</li>
+                    </ul>
+                </li>
+                <li><strong>Farmacia:</strong>
+                    <ul>
+                        <li>Al recoger nuevos medicamentos para registrarlos</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h3>Momentos críticos del día:</h3>
+            <ul>
+                <li>Mañana temprano (múltiples medicamentos)</li>
+                <li>Mediodía (medicamentos con almuerzo)</li>
+                <li>Tarde-noche (medicamentos antes de dormir)</li>
+            </ul>
+
+            <hr>
+
+            <!-- User Personas -->
+            <h1>3. USER PERSONAS</h1>
+
+            <!-- Persona 1: María -->
+            <div class="persona-card">
+                <div class="persona-header">
+                    <div class="persona-avatar">MG</div>
+                    <div class="persona-title">
+                        <h3>María González (Paciente)</h3>
+                        <p class="persona-subtitle">Persona Primaria</p>
+                    </div>
+                </div>
+
+                <h4>Demografía:</h4>
+                <ul>
+                    <li><strong>Edad:</strong> 68 años</li>
+                    <li><strong>Ocupación:</strong> Jubilada, ex-docente</li>
+                    <li><strong>Ubicación:</strong> Medellín, Colombia</li>
+                    <li><strong>Estado civil:</strong> Viuda, vive con su hija</li>
+                    <li><strong>Nivel educativo:</strong> Universitario</li>
+                </ul>
+
+                <h4>Perfil tecnológico:</h4>
+                <ul>
+                    <li>Usa smartphone básicamente para WhatsApp y llamadas</li>
+                    <li>Conoce apps básicas pero prefiere interfaces simples</li>
+                    <li>Tiene dificultad con textos pequeños</li>
+                    <li>Prefiere botones grandes y colores contrastantes</li>
+                </ul>
+
+                <h4>Condiciones médicas:</h4>
+                <ul>
+                    <li>Diabetes tipo 2</li>
+                    <li>Hipertensión arterial</li>
+                    <li>Hipotiroidismo</li>
+                    <li>Colesterol elevado</li>
+                    <li>Osteoporosis</li>
+                </ul>
+
+                <h4>Régimen de medicamentos:</h4>
+                <p><strong>8 medicamentos diarios:</strong></p>
+                <ul>
+                    <li>Metformina 850mg - 2 veces al día (desayuno y cena)</li>
+                    <li>Losartán 50mg - 1 vez al día (mañana)</li>
+                    <li>Levotiroxina 100mcg - 1 vez al día (30 min antes del desayuno)</li>
+                    <li>Atorvastatina 20mg - 1 vez al día (noche)</li>
+                    <li>Calcio + Vitamina D - 1 vez al día (almuerzo)</li>
+                    <li>Aspirina 100mg - 1 vez al día (después del desayuno)</li>
+                    <li>Omeprazol 20mg - 1 vez al día (antes del desayuno)</li>
+                    <li>Suplemento vitamínico - 1 vez al día (desayuno)</li>
+                </ul>
+
+                <h4>Objetivos:</h4>
+                <ul>
+                    <li>Tomar todos sus medicamentos en los horarios correctos</li>
+                    <li>No confundir medicamentos</li>
+                    <li>Sentirse segura de que está tomando las dosis correctas</li>
+                    <li>Recordar cuándo debe resurtir sus medicamentos</li>
+                    <li>Mantener su independencia y no depender de su hija para recordatorios</li>
+                </ul>
+
+                <h4>Frustraciones y Pain Points:</h4>
+                <ul>
+                    <li><strong>Olvidos frecuentes:</strong> A veces olvida si ya tomó su medicamento de la mañana</li>
+                    <li><strong>Confusión matutina:</strong> Las pastillas blancas se ven todas iguales</li>
+                    <li><strong>Ansiedad:</strong> Preocupación constante de estar tomando algo mal</li>
+                    <li><strong>Interrupciones:</strong> Si suena el teléfono o visitan, pierde el hilo de lo que estaba haciendo</li>
+                    <li><strong>Viajes:</strong> Cuando visita a familiares, su rutina se desordena</li>
+                </ul>
+
+                <h4>Necesidades:</h4>
+                <ul>
+                    <li>Recordatorios claros y específicos (con nombre del medicamento)</li>
+                    <li>Confirmación visual de que tomó el medicamento</li>
+                    <li>Historial de lo que ya tomó en el día</li>
+                    <li>Alarmas que no pueda "ignorar" fácilmente</li>
+                    <li>Interfaz con letras grandes y colores diferenciados</li>
+                    <li>Ayuda para identificar visualmente cada medicamento</li>
+                </ul>
+
+                <h4>Cita relevante:</h4>
+                <p><em>"A veces me despierto y no sé si ya tomé la pastilla de la tiroides o si solo soñé que la tomé. Me da miedo tomar doble dosis, pero también me da miedo no tomarla."</em></p>
+            </div>
+
+            <!-- Persona 2: Dr. Carlos -->
+            <div class="persona-card">
+                <div class="persona-header">
+                    <div class="persona-avatar">CR</div>
+                    <div class="persona-title">
+                        <h3>Dr. Carlos Ramírez (Médico Tratante)</h3>
+                        <p class="persona-subtitle">Persona Secundaria</p>
+                    </div>
+                </div>
+
+                <h4>Demografía:</h4>
+                <ul>
+                    <li><strong>Edad:</strong> 45 años</li>
+                    <li><strong>Especialidad:</strong> Medicina Interna</li>
+                    <li><strong>Ubicación:</strong> Medellín, Colombia</li>
+                    <li><strong>Institución:</strong> IPS privada</li>
+                    <li><strong>Experiencia:</strong> 18 años de práctica</li>
+                </ul>
+
+                <h4>Perfil profesional:</h4>
+                <ul>
+                    <li>Atiende aproximadamente 25-30 pacientes por día</li>
+                    <li>Especializado en pacientes con enfermedades crónicas</li>
+                    <li>Usa historia clínica electrónica básica</li>
+                    <li>Prefiere soluciones tecnológicas que no interrumpan su flujo de trabajo</li>
+                </ul>
+
+                <h4>Carga de trabajo típica:</h4>
+                <ul>
+                    <li>Consultas de 20-30 minutos por paciente</li>
+                    <li>Muchos pacientes adultos mayores con polimedicación</li>
+                    <li>Presión por cumplir metas de productividad</li>
+                    <li>Debe revisar y ajustar tratamientos constantemente</li>
+                </ul>
+
+                <h4>Objetivos:</h4>
+                <ul>
+                    <li>Tomar decisiones clínicas informadas sobre ajustes de medicación</li>
+                    <li>Identificar pacientes en riesgo por baja adherencia</li>
+                    <li>Reducir hospitalizaciones evitables</li>
+                    <li>Mejorar resultados de salud de sus pacientes</li>
+                    <li>Optimizar el tiempo de consulta</li>
+                </ul>
+
+                <h4>Frustraciones y Pain Points:</h4>
+                <ul>
+                    <li><strong>Información subjetiva:</strong> Solo tiene la palabra del paciente sobre adherencia</li>
+                    <li><strong>Tiempo limitado:</strong> No alcanza a revisar en detalle el cumplimiento del tratamiento</li>
+                    <li><strong>Decisiones a ciegas:</strong> No sabe si falta de mejora es por mala adherencia o ineficacia del medicamento</li>
+                    <li><strong>Comunicación fragmentada:</strong> Pacientes ven múltiples especialistas y no comparte información</li>
+                    <li><strong>Sorpresas en laboratorios:</strong> Resultados inesperados que sugieren mala adherencia no reportada</li>
+                </ul>
+
+                <h4>Necesidades:</h4>
+                <ul>
+                    <li>Dashboard con datos objetivos de adherencia de sus pacientes</li>
+                    <li>Alertas tempranas de pacientes con adherencia <70%</li>
+                    <li>Visualización de patrones (¿qué medicamentos olvidan más?)</li>
+                    <li>Reportes exportables para incluir en historia clínica</li>
+                    <li>Integración con su sistema actual (no doble trabajo)</li>
+                    <li>Acceso rápido sin comprometer privacidad del paciente</li>
+                </ul>
+
+                <h4>Cita relevante:</h4>
+                <p><em>"Muchas veces subo la dosis de un medicamento porque creo que no está funcionando, cuando en realidad el paciente solo lo está tomando la mitad de las veces. Si tuviera datos objetivos, podría tomar mejores decisiones."</em></p>
+            </div>
+
+            <hr>
+
+            <!-- Pain Points -->
+            <h1>4. PAIN POINTS IDENTIFICADOS</h1>
+
+            <h2>4.1 Matriz de Pain Points del Paciente</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Pain Point</th>
+                        <th>Frecuencia</th>
+                        <th>Impacto</th>
+                        <th>Prioridad</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Olvido de medicamentos</strong></td>
+                        <td>Muy alta (diario)</td>
+                        <td>Alto</td>
+                        <td>🔴 Crítica</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Confusión entre medicamentos similares</strong></td>
+                        <td>Media (semanal)</td>
+                        <td>Muy alto</td>
+                        <td>🔴 Crítica</td>
+                    </tr>
+                    <tr>
+                        <td><strong>No sabe si ya tomó el medicamento</strong></td>
+                        <td>Alta (varias veces/semana)</td>
+                        <td>Alto</td>
+                        <td>🔴 Crítica</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Dificultad para leer etiquetas</strong></td>
+                        <td>Alta (constante)</td>
+                        <td>Medio</td>
+                        <td>🟡 Alta</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Olvidar cuándo resurtir</strong></td>
+                        <td>Media (mensual)</td>
+                        <td>Alto</td>
+                        <td>🟡 Alta</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Desconocimiento de interacciones</strong></td>
+                        <td>Baja</td>
+                        <td>Muy alto</td>
+                        <td>🟡 Alta</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Ansiedad por equivocarse</strong></td>
+                        <td>Alta (diaria)</td>
+                        <td>Medio</td>
+                        <td>🟢 Media</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Rutina se desordena en viajes</strong></td>
+                        <td>Baja (ocasional)</td>
+                        <td>Medio</td>
+                        <td>🟢 Media</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>4.2 Matriz de Pain Points del Médico</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Pain Point</th>
+                        <th>Frecuencia</th>
+                        <th>Impacto</th>
+                        <th>Prioridad</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Falta de datos objetivos sobre adherencia</strong></td>
+                        <td>Muy alta (cada consulta)</td>
+                        <td>Alto</td>
+                        <td>🔴 Crítica</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Decisiones sin información completa</strong></td>
+                        <td>Alta (cada ajuste)</td>
+                        <td>Muy alto</td>
+                        <td>🔴 Crítica</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Tiempo limitado en consulta</strong></td>
+                        <td>Muy alta (diaria)</td>
+                        <td>Medio</td>
+                        <td>🟡 Alta</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Información fragmentada entre especialistas</strong></td>
+                        <td>Media</td>
+                        <td>Alto</td>
+                        <td>🟡 Alta</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Dificultad para identificar pacientes en riesgo</strong></td>
+                        <td>Media</td>
+                        <td>Alto</td>
+                        <td>🟡 Alta</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Doble trabajo al usar nuevos sistemas</strong></td>
+                        <td>Baja</td>
+                        <td>Medio</td>
+                        <td>🟢 Media</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <hr>
+
+            <!-- Benchmarking -->
+            <h1>5. BENCHMARKING COMPETITIVO</h1>
+
+            <h2>5.1 Aplicaciones Analizadas</h2>
+
+            <h3>Medisafe (Líder del mercado)</h3>
+            <p><strong>Descripción:</strong> App de recordatorios de medicamentos con más de 10 millones de descargas.</p>
+
+            <h4>Fortalezas:</h4>
+            <ul>
+                <li>✅ Interfaz intuitiva y amigable</li>
+                <li>✅ Recordatorios personalizables</li>
+                <li>✅ Notificaciones push efectivas</li>
+                <li>✅ Registro de tomas con confirmación</li>
+                <li>✅ Reportes de adherencia</li>
+                <li>✅ Opción de compartir con familiares</li>
+            </ul>
+
+            <h4>Debilidades:</h4>
+            <ul>
+                <li>❌ No tiene escaneo de código de barras</li>
+                <li>❌ Verificación de interacciones solo en versión premium</li>
+                <li>❌ Dashboard médico limitado</li>
+                <li>❌ Interfaz no optimizada para adultos mayores</li>
+                <li>❌ Requiere registro manual extenso</li>
+            </ul>
+
+            <h3>MyTherapy</h3>
+            <p><strong>Descripción:</strong> App alemana enfocada en adherencia y seguimiento de síntomas.</p>
+
+            <h4>Fortalezas:</h4>
+            <ul>
+                <li>✅ Seguimiento de medicamentos y actividades</li>
+                <li>✅ Diseño limpio y claro</li>
+                <li>✅ Recordatorios confiables</li>
+                <li>✅ Exportar reportes PDF</li>
+                <li>✅ Disponible en español</li>
+            </ul>
+
+            <h4>Debilidades:</h4>
+            <ul>
+                <li>❌ No tiene identificación visual de medicamentos</li>
+                <li>❌ Sin verificación de interacciones</li>
+                <li>❌ Dashboard médico inexistente</li>
+                <li>❌ Proceso de onboarding largo</li>
+            </ul>
+
+            <h3>Mango Health</h3>
+            <p><strong>Descripción:</strong> App con gamificación para incentivar adherencia.</p>
+
+            <h4>Fortalezas:</h4>
+            <ul>
+                <li>✅ Sistema de recompensas</li>
+                <li>✅ Identificación de interacciones</li>
+                <li>✅ Base de datos de medicamentos en EE.UU.</li>
+                <li>✅ Interfaz moderna</li>
+            </ul>
+
+            <h4>Debilidades:</h4>
+            <ul>
+                <li>❌ Gamificación puede distraer del objetivo principal</li>
+                <li>❌ No disponible en español</li>
+                <li>❌ Base de datos no adaptada a Latinoamérica</li>
+                <li>❌ Sin funcionalidad para médicos</li>
+                <li>❌ Requiere conexión constante</li>
+            </ul>
+
+            <h2>5.2 Oportunidades Identificadas</h2>
+
+            <div class="info-box">
+                <h4>MediMind se diferencia con:</h4>
+                <ul>
+                    <li>🎯 <strong>Escaneo de código de barras + OCR</strong> para registro rápido de medicamentos</li>
+                    <li>🎯 <strong>Verificación de interacciones</strong> en tiempo real sin costo adicional</li>
+                    <li>🎯 <strong>Dashboard médico robusto</strong> incluido desde el inicio</li>
+                    <li>🎯 <strong>Diseño específico para adultos mayores</strong> (contraste, tamaño de fuente, simplicidad)</li>
+                    <li>🎯 <strong>Adaptado a Colombia/Latinoamérica</strong> (medicamentos locales, sistema de salud)</li>
+                    <li>🎯 <strong>Modo offline</strong> para zonas sin conectividad constante</li>
+                    <li>🎯 <strong>Foto del medicamento</strong> para identificación visual rápida</li>
+                </ul>
+            </div>
+
+            <hr>
+
+            <!-- Conclusiones -->
+            <h1>6. CONCLUSIONES Y PRÓXIMOS PASOS</h1>
+
+            <h2>6.1 Hallazgos Principales</h2>
+
+            <ol>
+                <li><strong>El problema es real y significativo:</strong> 2+ millones de colombianos toman múltiples medicamentos diarios</li>
+                <li><strong>Impacto en salud pública:</strong> 15-20% de hospitalizaciones evitables relacionadas con errores de medicación</li>
+                <li><strong>Gap en el mercado:</strong> Apps existentes no están diseñadas para adultos mayores ni médicos latinoamericanos</li>
+                <li><strong>Doble usuario:</strong> Solución debe servir tanto a pacientes como a médicos tratantes</li>
+                <li><strong>Tecnología como habilitador:</strong> Smartphone ya está en manos de la mayoría del público objetivo</li>
+            </ol>
+
+            <h2>6.2 Recomendaciones de Diseño</h2>
+
+            <h3>Para Aplicación Móvil (Paciente):</h3>
+            <ul>
+                <li>Priorizar tamaño de fuente grande y alto contraste</li>
+                <li>Botones grandes y espaciados</li>
+                <li>Flujo de navegación simple (máximo 3 taps para cualquier acción)</li>
+                <li>Confirmación visual clara de cada acción</li>
+                <li>Alarmas que requieren interacción activa (no solo "swipe para ignorar")</li>
+                <li>Mínimo uso de texto, máximo uso de íconos y colores</li>
+            </ul>
+
+            <h3>Para Dashboard Web (Médico):</h3>
+            <ul>
+                <li>Vista de lista de pacientes con indicador de adherencia</li>
+                <li>Dashboard individual por paciente con gráficos simples</li>
+                <li>Alertas automáticas de pacientes en riesgo</li>
+                <li>Exportación de reportes en formato compatible con historia clínica</li>
+                <li>Acceso rápido sin múltiples logins</li>
+                <li>Diseño responsive para acceso desde tablet en consultorio</li>
+            </ul>
+
+            <h2>6.3 Métricas de Éxito Propuestas</h2>
+
+            <h3>Métricas del Paciente:</h3>
+            <ul>
+                <li><strong>Adherencia general:</strong> >85% de medicamentos tomados a tiempo</li>
+                <li><strong>Reducción de errores:</strong> 90% menos confusiones reportadas</li>
+                <li><strong>Satisfacción:</strong> NPS (Net Promoter Score) >50</li>
+                <li><strong>Retención:</strong> >70% de usuarios activos a 3 meses</li>
+            </ul>
+
+            <h3>Métricas del Médico:</h3>
+            <ul>
+                <li><strong>Adopción:</strong> 100 médicos registrados en primeros 6 meses</li>
+                <li><strong>Uso activo:</strong> Revisar dashboard al menos 1 vez por semana</li>
+                <li><strong>Ahorro de tiempo:</strong> 5 minutos ahorrados por consulta</li>
+                <li><strong>Satisfacción:</strong> NPS >60</li>
+            </ul>
+
+            <h3>Métricas del Negocio:</h3>
+            <ul>
+                <li><strong>Usuarios:</strong> 1,000 usuarios activos en 6 meses</li>
+                <li><strong>CAC:</strong> Costo de adquisición <$20 USD por usuario</li>
+                <li><strong>Churn:</strong> <5% mensual</li>
+                <li><strong>Conversión a premium:</strong> >10% en primer año</li>
+            </ul>
+
+            <hr>
+
+            <!-- Footer Navigation -->
+            <div style="margin-top: 3rem; padding-top: 2rem; border-top: 2px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <a href="./index.html" class="back-link" style="color: var(--primary-color);">← Volver al inicio</a>
+                <div class="download-actions">
+                    <button onclick="window.print()" class="download-btn">
+                        📄 Descargar como PDF
+                    </button>
+                    <a href="./docs/MediMind_Investigacion_Usuarios.md" class="download-btn btn-secondary" download>
+                        📥 Descargar Markdown
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Print functionality
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+                e.preventDefault();
+                window.print();
+            }
+        });
+
+        // Smooth scroll for internal links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

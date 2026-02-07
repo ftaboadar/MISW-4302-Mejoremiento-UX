@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Lista Priorizada de MVP - MediMind">
+    <title>MVP - MediMind</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #0ea5e9;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --bg-light: #f8fafc;
+            --bg-white: #ffffff;
+            --border-color: #e2e8f0;
+            --accent-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.7;
+            color: var(--text-dark);
+            background-color: var(--bg-light);
+        }
+
+        .doc-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .doc-header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: white;
+            text-decoration: none;
+            margin-bottom: 1rem;
+            opacity: 0.9;
+            transition: opacity 0.2s;
+        }
+
+        .back-link:hover {
+            opacity: 1;
+        }
+
+        .doc-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .doc-subtitle {
+            font-size: 1.25rem;
+            opacity: 0.95;
+            font-weight: 300;
+        }
+
+        .doc-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .doc-content {
+            background: var(--bg-white);
+            border-radius: 12px;
+            padding: 3rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 2rem;
+            color: var(--text-dark);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 0.5rem;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            color: var(--text-dark);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            color: var(--primary-color);
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+
+        .priority-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            font-size: 0.9rem;
+        }
+
+        .priority-table th {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 0.75rem;
+            text-align: left;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+
+        .priority-table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .priority-table tr:hover {
+            background: var(--bg-light);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .badge-mvp {
+            background: #10b981;
+            color: white;
+        }
+
+        .badge-short {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .badge-medium {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .badge-long {
+            background: #ef4444;
+            color: white;
+        }
+
+        .value-high {
+            color: #10b981;
+            font-weight: 600;
+        }
+
+        .value-medium {
+            color: #f59e0b;
+            font-weight: 600;
+        }
+
+        .value-low {
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        .risk-low {
+            background: #d1fae5;
+            color: #065f46;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        .risk-medium {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        .risk-high {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        .info-box {
+            background: var(--bg-light);
+            border-left: 4px solid var(--primary-color);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 4px;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+            margin: 2rem 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--primary-color);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2rem;
+            padding-left: 1.5rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -2.5rem;
+            top: 0.5rem;
+            width: 1rem;
+            height: 1rem;
+            border-radius: 50%;
+            background: var(--primary-color);
+            border: 3px solid white;
+            box-shadow: 0 0 0 3px var(--primary-color);
+        }
+
+        .timeline-title {
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .feature-list li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .feature-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        .download-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 1rem;
+            text-decoration: none;
+        }
+
+        .download-btn.btn-primary {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .download-btn.btn-primary:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        .download-btn.btn-secondary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .download-btn.btn-secondary:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        @media (max-width: 768px) {
+            .doc-content {
+                padding: 1.5rem;
+            }
+
+            .priority-table {
+                font-size: 0.8rem;
+            }
+
+            .priority-table th,
+            .priority-table td {
+                padding: 0.5rem 0.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-header">
+        <div class="doc-header-content">
+            <a href="./index.html" class="back-link">← Volver al inicio</a>
+            <h1 class="doc-title">Lista Priorizada de MVP</h1>
+            <p class="doc-subtitle">Roadmap de Funcionalidades - MediMind</p>
+        </div>
+    </div>
+
+    <div class="doc-container">
+        <div class="doc-content">
+
+            <h1>1. INTRODUCCIÓN</h1>
+            
+            <div class="info-box">
+                <p><strong>Objetivo:</strong> Priorizar funcionalidades de MediMind basándose en valor para el usuario, esfuerzo de desarrollo y riesgo técnico.</p>
+                <p><strong>Metodología:</strong> Análisis de valor vs. esfuerzo, evaluación de riesgos, y distribución en 4 fases temporales.</p>
+            </div>
+
+            <h2>Criterios de Priorización</h2>
+            <ul>
+                <li><strong>Valor para Usuario:</strong> ¿Qué tan importante es para resolver el problema principal?</li>
+                <li><strong>Esfuerzo de Desarrollo:</strong> Tiempo y recursos necesarios</li>
+                <li><strong>Riesgo Técnico:</strong> Probabilidad de problemas en implementación</li>
+                <li><strong>Dependencias:</strong> Requisitos previos para la funcionalidad</li>
+            </ul>
+
+            <hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--border-color);">
+
+            <h1>2. APLICACIÓN MÓVIL (Pacientes)</h1>
+
+            <h2>2.1 MVP - Primera Versión (0-3 meses)</h2>
+            
+            <table class="priority-table">
+                <thead>
+                    <tr>
+                        <th style="width: 5%">#</th>
+                        <th style="width: 30%">Funcionalidad</th>
+                        <th style="width: 15%">Valor</th>
+                        <th style="width: 15%">Esfuerzo</th>
+                        <th style="width: 15%">Riesgo</th>
+                        <th style="width: 20%">Tiempo Estimado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>F1</td>
+                        <td><strong>Registro de usuario básico</strong></td>
+                        <td class="value-high">Alto</td>
+                        <td>2-3 días</td>
+                        <td><span class="risk-low">Bajo</span></td>
+                        <td>Email/contraseña simple</td>
+                    </tr>
+                    <tr>
+                        <td>F2</td>
+                        <td><strong>Registro manual de medicamentos</strong></td>
+                        <td class="value-high">Muy Alto</td>
+                        <td>5-7 días</td>
+                        <td><span class="risk-low">Bajo</span></td>
+                        <td>Formulario con campos básicos</td>
+                    </tr>
+                    <tr>
+                        <td>F3</td>
+                        <td><strong>Recordatorios/alarmas básicas</strong></td>
+                        <td class="value-high">Muy Alto</td>
+                        <td>5-7 días</td>
+                        <td><span class="risk-medium">Medio</span></td>
+                        <td>Push notifications</td>
+                    </tr>
+                    <tr>
+                        <td>F4</td>
+                        <td><strong>Confirmación de toma</strong></td>
+                        <td class="value-high">Muy Alto</td>
+                        <td>2-3 días</td>
+                        <td><span class="risk-low">Bajo</span></td>
+                        <td>Botón "Tomado" con timestamp</td>
+                    </tr>
+                    <tr>
+                        <td>F5</td>
+                        <td><strong>Vista de medicamentos activos</strong></td>
+                        <td class="value-high">Alto</td>
+                        <td>4-5 días</td>
+                        <td><span class="risk-low">Bajo</span></td>
+                        <td>Lista con próximas tomas</td>
+                    </tr>
+                    <tr>
+                        <td>F6</td>
+                        <td><strong>Historial básico (7 días)</strong></td>
+                        <td class="value-medium">Medio</td>
+                        <td>3-4 días</td>
+                        <td><span class="risk-low">Bajo</span></td>
+                        <td>Vista de registros recientes</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="info-box">
+                <p><strong>🎯 Objetivo del MVP:</strong> Validar que los usuarios usan recordatorios y confirman tomas de medicamentos.</p>
+                <p><strong>📊 Criterio de éxito:</strong> 100+ usuarios activos con retención >50% a 30 días y adherencia promedio >75%.</p>
+            </div>
+
+            <h2>2.2 Corto Plazo (3-6 meses)</h2>
+
+            <table class="priority-table">
+                <thead>
+                    <tr>
+                        <th style="width: 5%">#</th>
+                        <th style="width: 30%">Funcionalidad</th>
+                        <th style="width: 15%">Valor</th>
+                        <th style="width: 15%">Esfuerzo</th>
+                        <th style="width: 15%">Riesgo</th>
+                        <th style="width: 20%">Tiempo Estimado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>F7</td>
+                        <td><strong>Escaneo código de barras</strong></td>
+                        <td class="value-high">Muy Alto</td>
+                        <td>10-12 días</td>
+                        <td><span class="risk-high">Alto</span></td>
+                        <td>Requiere BD de medicamentos</td>
+                    </tr>
+                    <tr>
+                        <td>F8</td>
+                        <td><strong>Foto de medicamento</strong></td>
+                        <td class="value-high">Alto</td>
+                        <td>2-3 días</td>
+                        <td><span class="risk-low">Bajo</span></td>
+                        <td>Captura y almacenamiento</td>
+                    </tr>
+                    <tr>
+                        <td>F9</td>
+                        <td><strong>Edición de medicamentos</strong></td>
+                        <td class="value-high">Alto</td>
+                        <td>4-5 días</td>
+                        <td><span class="risk-low">Bajo</span></td>
+                        <td>CRUD completo</td>
+                    </tr>
+                    <tr>
+                        <td>F10</td>
+                        <td><strong>Configuración de alarmas</strong></td>
+                        <td class="value-high">Alto</td>
+                        <td>3-4 días</td>
+                        <td><span class="risk-low">Bajo</span></td>
+                        <td>Sonidos, vibración, snooze</td>
+                    </tr>
+                    <tr>
+                        <td>F11</td>
+                        <td><strong>Estadísticas de adherencia</strong></td>
+                        <td class="value-high">Alto</td>
+                        <td>5-6 días</td>
+                        <td><span class="risk-medium">Medio</span></td>
+                        <td>Gráficos y porcentajes</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>2.3 Mediano Plazo (6-12 meses)</h2>
+
+            <table class="priority-table">
+                <thead>
+                    <tr>
+                        <th style="width: 5%">#</th>
+                        <th style="width: 30%">Funcionalidad</th>
+                        <th style="width: 15%">Valor</th>
+                        <th style="width: 15%">Esfuerzo</th>
+                        <th style="width: 15%">Riesgo</th>
+                        <th style="width: 20%">Observaciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>F12</td>
+                        <td><strong>Verificación de interacciones</strong></td>
+                        <td class="value-high">Muy Alto</td>
+                        <td>15-20 días</td>
+                        <td><span class="risk-high">Muy Alto</span></td>
+                        <td>Requiere API médica certificada</td>
+                    </tr>
+                    <tr>
+                        <td>F13</td>
+                        <td><strong>Recordatorio de resurtir</strong></td>
+                        <td class="value-high">Alto</td>
+                        <td>5-7 días</td>
+                        <td><span class="risk-medium">Medio</span></td>
+                        <td>Basado en stock restante</td>
+                    </tr>
+                    <tr>
+                        <td>F14</td>
+                        <td><strong>Contactos de emergencia</strong></td>
+                        <td class="value-medium">Medio</td>
+                        <td>8-10 días</td>
+                        <td><span class="risk-medium">Medio</span></td>
+                        <td>Alertas automáticas</td>
+                    </tr>
+                    <tr>
+                        <td>F15</td>
+                        <td><strong>Modo offline completo</strong></td>
+                        <td class="value-high">Alto</td>
+                        <td>7-9 días</td>
+                        <td><span class="risk-medium">Medio</span></td>
+                        <td>Sincronización al reconectar</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>2.4 Largo Plazo (12+ meses)</h2>
+
+            <table class="priority-table">
+                <thead>
+                    <tr>
+                        <th style="width: 5%">#</th>
+                        <th style="width: 30%">Funcionalidad</th>
+                        <th style="width: 15%">Valor</th>
+                        <th style="width: 15%">Esfuerzo</th>
+                        <th style="width: 15%">Riesgo</th>
+                        <th style="width: 20%">Observaciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>F16</td>
+                        <td><strong>OCR de receta médica</strong></td>
+                        <td class="value-high">Alto</td>
+                        <td>20-25 días</td>
+                        <td><span class="risk-high">Muy Alto</span></td>
+                        <td>Requiere ML avanzado</td>
+                    </tr>
+                    <tr>
+                        <td>F17</td>
+                        <td><strong>Gamificación</strong></td>
+                        <td class="value-medium">Medio</td>
+                        <td>12-15 días</td>
+                        <td><span class="risk-medium">Medio</span></td>
+                        <td>Logros, racha, recompensas</td>
+                    </tr>
+                    <tr>
+                        <td>F18</td>
+                        <td><strong>Integración wearables</strong></td>
+                        <td class="value-medium">Medio</td>
+                        <td>15-20 días</td>
+                        <td><span class="risk-high">Alto</span></td>
+                        <td>Apple Watch, smartbands</td>
+                    </tr>
+                    <tr>
+                        <td>F19</td>
+                        <td><strong>Asistente por voz</strong></td>
+                        <td class="value-medium">Medio</td>
+                        <td>20+ días</td>
+                        <td><span class="risk-high">Alto</span></td>
+                        <td>Alexa, Google Assistant</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--border-color);">
+
+            <h1>3. DASHBOARD WEB (Médicos)</h1>
+
+            <h2>3.1 MVP - Primera Versión</h2>
+
+            <table class="priority-table">
+                <thead>
+                    <tr>
+                        <th style="width: 5%">#</th>
+                        <th style="width: 35%">Funcionalidad</th>
+                        <th style="width: 20%">Esfuerzo</th>
+                        <th style="width: 40%">Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>F20</td>
+                        <td><strong>Login médicos</strong></td>
+                        <td>4-5 días</td>
+                        <td>Autenticación con verificación profesional</td>
+                    </tr>
+                    <tr>
+                        <td>F21</td>
+                        <td><strong>Lista de pacientes</strong></td>
+                        <td>3-4 días</td>
+                        <td>Vista general con indicadores de adherencia</td>
+                    </tr>
+                    <tr>
+                        <td>F22</td>
+                        <td><strong>Dashboard individual</strong></td>
+                        <td>8-10 días</td>
+                        <td>Métricas detalladas por paciente</td>
+                    </tr>
+                    <tr>
+                        <td>F23</td>
+                        <td><strong>Sistema de vinculación</strong></td>
+                        <td>5-6 días</td>
+                        <td>Código para conectar médico-paciente</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>3.2 Corto Plazo</h2>
+
+            <table class="priority-table">
+                <thead>
+                    <tr>
+                        <th style="width: 5%">#</th>
+                        <th style="width: 35%">Funcionalidad</th>
+                        <th style="width: 20%">Esfuerzo</th>
+                        <th style="width: 40%">Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>F24</td>
+                        <td><strong>Exportar reporte PDF</strong></td>
+                        <td>4-5 días</td>
+                        <td>Reporte de adherencia para historia clínica</td>
+                    </tr>
+                    <tr>
+                        <td>F25</td>
+                        <td><strong>Alertas pacientes en riesgo</strong></td>
+                        <td>5-6 días</td>
+                        <td>Notificaciones de adherencia <70%</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>3.3 Mediano Plazo</h2>
+
+            <table class="priority-table">
+                <thead>
+                    <tr>
+                        <th style="width: 5%">#</th>
+                        <th style="width: 35%">Funcionalidad</th>
+                        <th style="width: 20%">Esfuerzo</th>
+                        <th style="width: 40%">Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>F26</td>
+                        <td><strong>Analytics agregados</strong></td>
+                        <td>8-10 días</td>
+                        <td>Métricas consolidadas de múltiples pacientes</td>
+                    </tr>
+                    <tr>
+                        <td>F27</td>
+                        <td><strong>Notas clínicas</strong></td>
+                        <td>4-5 días</td>
+                        <td>Anotaciones del médico sobre cada paciente</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>3.4 Largo Plazo</h2>
+
+            <table class="priority-table">
+                <thead>
+                    <tr>
+                        <th style="width: 5%">#</th>
+                        <th style="width: 35%">Funcionalidad</th>
+                        <th style="width: 20%">Esfuerzo</th>
+                        <th style="width: 40%">Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>F28</td>
+                        <td><strong>Integración HCE</strong></td>
+                        <td>30+ días</td>
+                        <td>Historia clínica electrónica institucional</td>
+                    </tr>
+                    <tr>
+                        <td>F29</td>
+                        <td><strong>Prescripción digital</strong></td>
+                        <td>25-30 días</td>
+                        <td>Crear y enviar recetas desde el dashboard</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--border-color);">
+
+            <h1>4. ROADMAP VISUAL</h1>
+
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-title">📅 FASE 1: MVP (Semanas 1-12)</div>
+                    <p><strong>Objetivo:</strong> Producto mínimo viable funcional</p>
+                    <ul class="feature-list">
+                        <li>6 funcionalidades mobile core</li>
+                        <li>4 funcionalidades dashboard básico</li>
+                        <li>Validación con 100+ usuarios</li>
+                        <li>Métricas: Adherencia >75%, Retención >50%</li>
+                    </ul>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-title">📅 FASE 2: Iteración (Semanas 13-24)</div>
+                    <p><strong>Objetivo:</strong> Mejorar UX y agregar funcionalidades clave</p>
+                    <ul class="feature-list">
+                        <li>Escaneo de código de barras</li>
+                        <li>Fotos de medicamentos</li>
+                        <li>Estadísticas de adherencia</li>
+                        <li>Exportar reportes PDF</li>
+                    </ul>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-title">📅 FASE 3: Expansión (Semanas 25-48)</div>
+                    <p><strong>Objetivo:</strong> Funcionalidades avanzadas</p>
+                    <ul class="feature-list">
+                        <li>Verificación de interacciones</li>
+                        <li>Modo offline completo</li>
+                        <li>Analytics médicos avanzados</li>
+                        <li>Contactos de emergencia</li>
+                    </ul>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-title">📅 FASE 4: Innovación (Semana 49+)</div>
+                    <p><strong>Objetivo:</strong> Diferenciación y escalabilidad</p>
+                    <ul class="feature-list">
+                        <li>OCR de recetas médicas</li>
+                        <li>Integración con HCE</li>
+                        <li>Wearables y asistentes de voz</li>
+                        <li>Prescripción digital</li>
+                    </ul>
+                </div>
+            </div>
+
+            <hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--border-color);">
+
+            <h1>5. JUSTIFICACIONES CLAVE</h1>
+
+            <h2>¿Por qué Escaneo NO está en el MVP?</h2>
+            <div class="info-box">
+                <p><strong>Razones técnicas:</strong></p>
+                <ul>
+                    <li>Requiere base de datos extensa de códigos de barras de medicamentos colombianos</li>
+                    <li>Integración con múltiples proveedores farmacéuticos</li>
+                    <li>Alto esfuerzo de desarrollo (10-12 días) vs. bajo riesgo</li>
+                </ul>
+                <p><strong>Razones de negocio:</strong></p>
+                <ul>
+                    <li>Los usuarios pueden agregar medicamentos manualmente mientras tanto</li>
+                    <li>No bloquea la validación de la hipótesis principal: ¿Los usuarios usan recordatorios?</li>
+                    <li>Se puede agregar en Fase 2 una vez validado el modelo</li>
+                </ul>
+            </div>
+
+            <h2>¿Por qué Verificación de Interacciones NO está en MVP?</h2>
+            <div class="info-box">
+                <p><strong>Riesgos legales y técnicos:</strong></p>
+                <ul>
+                    <li>Alto riesgo legal/médico - requiere certificación sanitaria</li>
+                    <li>Necesita integración con bases de datos médicas certificadas</li>
+                    <li>15-20 días de desarrollo mínimo</li>
+                    <li>Requiere validación clínica y legal antes de lanzamiento</li>
+                </ul>
+                <p><strong>Estrategia:</strong></p>
+                <ul>
+                    <li>Validar primero el core value proposition (recordatorios efectivos)</li>
+                    <li>Agregar interacciones cuando ya hay masa crítica de usuarios</li>
+                    <li>Será feature diferenciadora en Fase 3</li>
+                </ul>
+            </div>
+
+            <hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--border-color);">
+
+            <h1>6. CRITERIOS DE ÉXITO</h1>
+
+            <h2>MVP (0-3 meses)</h2>
+            <ul>
+                <li>✅ 100+ usuarios activos registrados</li>
+                <li>✅ Retención >50% a 30 días</li>
+                <li>✅ 70%+ tasa de respuesta a recordatorios</li>
+                <li>✅ Adherencia promedio >75%</li>
+                <li>✅ NPS (Net Promoter Score) >40</li>
+                <li>✅ <5 crashes por cada 1000 sesiones</li>
+            </ul>
+
+            <h2>Fase 2 (3-6 meses)</h2>
+            <ul>
+                <li>✅ 500+ usuarios activos</li>
+                <li>✅ 50+ médicos registrados</li>
+                <li>✅ Uso de escaneo en >60% de registros nuevos</li>
+                <li>✅ Adherencia promedio >80%</li>
+                <li>✅ NPS >50</li>
+            </ul>
+
+            <h2>Fase 3 (6-12 meses)</h2>
+            <ul>
+                <li>✅ 2,000+ usuarios activos</li>
+                <li>✅ 100+ médicos activos</li>
+                <li>✅ Adherencia promedio >85%</li>
+                <li>✅ <10% churn mensual</li>
+                <li>✅ NPS >60</li>
+                <li>✅ Primeras alianzas con IPS/EPS</li>
+            </ul>
+
+            <!-- Footer -->
+            <div style="margin-top: 3rem; padding-top: 2rem; border-top: 2px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <a href="./index.html" class="back-link" style="color: var(--primary-color);">← Volver al inicio</a>
+                <div class="download-actions">
+                    <button onclick="window.print()" class="download-btn btn-primary">
+                        📄 Descargar como PDF
+                    </button>
+                    <a href="./docs/MediMind_MVP_Lista.md" class="download-btn btn-secondary" download>
+                        📥 Descargar Markdown
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>
